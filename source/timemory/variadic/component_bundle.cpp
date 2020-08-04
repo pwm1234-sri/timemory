@@ -61,7 +61,7 @@ component_bundle<Tag, Types...>::component_bundle(const string_t&     key,
 : bundle_type(((settings::enabled()) ? add_hash_id(key) : 0), quirk::config<T...>{})
 , m_data(invoke::construct<data_type, Tag>(key, config))
 {
-    apply_v::set_value(m_data, nullptr);
+    // apply_v::set_value(m_data, nullptr);
     if(m_store)
     {
         // IF_CONSTEXPR(!quirk_config<quirk::no_store, T...>::value)
@@ -85,7 +85,7 @@ component_bundle<Tag, Types...>::component_bundle(const captured_location_t& loc
 : bundle_type(loc.get_hash(), quirk::config<T...>{})
 , m_data(invoke::construct<data_type, Tag>(loc, config))
 {
-    apply_v::set_value(m_data, nullptr);
+    // apply_v::set_value(m_data, nullptr);
     if(m_store)
     {
         // IF_CONSTEXPR(!quirk_config<quirk::no_store, T...>::value)
@@ -112,7 +112,7 @@ component_bundle<Tag, Types...>::component_bundle(const string_t& key, const boo
                                      quirk_config<quirk::tree_scope>::value))
 , m_data(invoke::construct<data_type, Tag>(key, store, _scope))
 {
-    apply_v::set_value(m_data, nullptr);
+    // apply_v::set_value(m_data, nullptr);
     if(m_store)
     {
         // IF_CONSTEXPR(!quirk_config<quirk::no_store>::value) { init_storage(); }
@@ -136,7 +136,7 @@ component_bundle<Tag, Types...>::component_bundle(const captured_location_t& loc
                                      quirk_config<quirk::tree_scope>::value))
 , m_data(invoke::construct<data_type, Tag>(loc, store, _scope))
 {
-    apply_v::set_value(m_data, nullptr);
+    // apply_v::set_value(m_data, nullptr);
     if(m_store)
     {
         // IF_CONSTEXPR(!quirk_config<quirk::no_store>::value) { init_storage(); }
@@ -160,7 +160,7 @@ component_bundle<Tag, Types...>::component_bundle(size_t hash, const bool& store
                                      quirk_config<quirk::tree_scope>::value))
 , m_data(invoke::construct<data_type, Tag>(hash, store, _scope))
 {
-    apply_v::set_value(m_data, nullptr);
+    // apply_v::set_value(m_data, nullptr);
     if(m_store)
     {
         // IF_CONSTEXPR(!quirk_config<quirk::no_store>::value) { init_storage(); }

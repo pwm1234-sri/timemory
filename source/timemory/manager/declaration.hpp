@@ -349,7 +349,7 @@ manager::add_finalizer(const std::string& _key, StackFunc&& _stack_func,
     // ensure there are no duplicates
     remove_finalizer(_key);
 
-    m_metadata_prefix = settings::get_output_prefix(true);
+    m_metadata_prefix = settings::get_global_output_prefix(true);
 
     if(m_write_metadata == 0)
         m_write_metadata = 1;

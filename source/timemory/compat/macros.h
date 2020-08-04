@@ -146,6 +146,11 @@
 #    endif
 #endif
 
+#define TIMEMORY_NEVER_INSTRUMENT                                                        \
+    __attribute__((no_instrument_function)) __attribute__((xray_never_instrument))
+
+#define TIMEMORY_INSTRUMENT __attribute__((xray_always_instrument))
+
 //======================================================================================//
 //
 //      Symbol override

@@ -50,7 +50,6 @@ target_link_libraries(timem PRIVATE
     timemory-threading
     timemory-headers
     timemory-cereal
-    timemory-arch
     timemory-papi
     timem-libexplain
     ${_STATIC_LIB})
@@ -78,7 +77,6 @@ target_link_libraries(timem-mpi PRIVATE
     timemory-threading
     timemory-headers
     timemory-cereal
-    timemory-arch
     timemory-papi
     timemory-mpi
     timem-libexplain

@@ -30,6 +30,7 @@
 #pragma once
 
 #include "timemory/manager/macros.hpp"
+#include "timemory/utility/types.hpp"
 
 #include <memory>
 #include <string>
@@ -50,3 +51,5 @@ class manager;
 //--------------------------------------------------------------------------------------//
 //
 }  // namespace tim
+
+TIMEMORY_SET_CLASS_VERSION(0, tim::manager)

@@ -5,6 +5,7 @@
 /*.nja
 settings.json
 *.swp
+.spack-env
 
 # Edit files
 *~

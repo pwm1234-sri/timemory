@@ -421,7 +421,7 @@ class rss_usage(base_decorator):
             _key = '{}{}'.format(self.key, _args)
         elif self.signature == context.basic:
             _key = '{}/{}/{}'.format(_func, self.key, _args)
-        elif self.signature == context.full:
+        elif self.signature == context.full:     
             _key = '{}/{}:{}/{}{}'.format(
                 _func, _file, _line, self.key, _args)
         _key = _key.strip('/')

@@ -38,30 +38,11 @@
 //
 //======================================================================================//
 //
-/// \macro TIMEMORY_USER_COMPONENT_ENUM
-/// \brief Extra enumerated components provided by a downstream application. If this
-/// macro is used, be sure to end the list with a comma
-///
-/// \code{.cpp}
-/// #define TIMEMORY_USER_COMPONENT_ENUM MY_COMPONENT =
-/// TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE + 1,
-/// \endcode
-//
-#if !defined(TIMEMORY_USER_COMPONENT_ENUM)
-#    define TIMEMORY_USER_COMPONENT_ENUM
-#endif
-
-/// \enum TIMEMORY_USER_COMPONENT_ENUM_SIZE
-/// \brief Macro specifying how many user component enumerations are provided
-#if !defined(TIMEMORY_USER_COMPONENT_ENUM_SIZE)
-#    define TIMEMORY_USER_COMPONENT_ENUM_SIZE 16
-#endif
-//
 /// \macro TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE
 /// \brief The number of enumerated components defined by timemory
 //
 #if !defined(TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE)
-#    define TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE 66
+#    define TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE 69
 #endif
 //
 /// \enum TIMEMORY_NATIVE_COMPONENT
@@ -89,6 +70,9 @@ enum TIMEMORY_NATIVE_COMPONENT
     CUPTI_ACTIVITY,
     CUPTI_COUNTERS,
     CURRENT_PEAK_RSS,
+    DATA_TRACKER_INTEGER,
+    DATA_TRACKER_UNSIGNED,
+    DATA_TRACKER_FLOATING,
     GPERFTOOLS_CPU_PROFILER,
     GPERFTOOLS_HEAP_PROFILER,
     GPU_ROOFLINE_DP_FLOPS,
@@ -137,8 +121,7 @@ enum TIMEMORY_NATIVE_COMPONENT
     WALL_CLOCK,
     WRITTEN_BYTES,
     WRITTEN_CHAR,
-    TIMEMORY_USER_COMPONENT_ENUM TIMEMORY_COMPONENTS_END =
-        (TIMEMORY_NATIVE_COMPONENT_ENUM_SIZE + TIMEMORY_USER_COMPONENT_ENUM_SIZE)
+    TIMEMORY_COMPONENTS_END
 };
 //
 //--------------------------------------------------------------------------------------//

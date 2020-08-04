@@ -106,6 +106,20 @@ TIMEMORY_DECLARE_COMPONENT(thread_cpu_util)
 //
 //======================================================================================//
 //
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::wall_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::system_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::user_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::cpu_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::monotonic_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::monotonic_raw_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::thread_cpu_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::process_cpu_clock)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::cpu_util)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::process_cpu_util)
+TIMEMORY_SET_CLASS_VERSION(0, tim::component::thread_cpu_util)
+//
+//--------------------------------------------------------------------------------------//
+//
 //                              STATISTICS
 //
 //--------------------------------------------------------------------------------------//

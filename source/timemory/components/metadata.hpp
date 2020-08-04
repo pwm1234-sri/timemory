@@ -22,14 +22,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/**
- * \file timemory/operations/extern.hpp
- * \brief Include the extern declarations for operations
+/** \file "timemory/component/metadata.hpp"
+ * Provides metadata attributes for components
+ *
  */
 
 #pragma once
 
-#include "timemory/operations/declaration.hpp"
-#include "timemory/operations/definition.hpp"
-#include "timemory/operations/macros.hpp"
-#include "timemory/operations/types.hpp"
+#include "timemory/enum.h"
+#include "timemory/mpl/apply.hpp"
+#include "timemory/variadic/macros.hpp"
+
+#include <string>
+
+namespace tim
+{
+namespace component
+{
+//
+template <typename Tp>
+struct metadata
+{
+    using type                                = Tp;
+    using value_type                          = TIMEMORY_COMPONENT;
+    static constexpr TIMEMORY_COMPONENT value = TIMEMORY_COMPONENTS_END;
+    static std::string                  label();
+    static std::string                  description();
+    static std::string                  extra_description() { return ""; }
+};
+//
+//--------------------------------------------------------------------------------------//
+//
+template <typename Tp>
+std::string
+metadata<Tp>::label()
+{
+    return try_demangle<Tp>();
+}
+//
+//--------------------------------------------------------------------------------------//
+//
+template <typename Tp>
+std::string
+metadata<Tp>::description()
+{
+    return try_demangle<Tp>();
+}
+//
+}  // namespace component
+}  // namespace tim

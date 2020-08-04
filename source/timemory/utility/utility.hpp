@@ -103,8 +103,6 @@ using pid_t = int;
 
 namespace tim
 {
-//--------------------------------------------------------------------------------------//
-
 template <typename Tp>
 inline bool
 isfinite(const Tp& arg)
@@ -178,10 +176,35 @@ demangle(const std::string& _str)
 //--------------------------------------------------------------------------------------//
 
 template <typename Tp>
-inline std::string
+inline auto
 demangle()
 {
     return demangle(typeid(Tp).name());
+}
+
+//--------------------------------------------------------------------------------------//
+
+namespace internal
+{
+template <typename Tp, typename Up = Tp>
+inline auto
+try_demangle(int) -> decltype(demangle<Tp>(), std::string())
+{
+    return demangle<Tp>();
+}
+template <typename Tp, typename Up = Tp>
+inline auto
+try_demangle(long)
+{
+    return "";
+}
+}  // namespace internal
+
+template <typename Tp>
+inline auto
+try_demangle()
+{
+    return internal::try_demangle<Tp>(0);
 }
 
 //--------------------------------------------------------------------------------------//

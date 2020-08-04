@@ -51,7 +51,7 @@ namespace tim
 //
 //--------------------------------------------------------------------------------------//
 //
-class TIMEMORY_ENVIRONMENT_DLL env_settings
+class env_settings
 {
 public:
     using mutex_t        = std::recursive_mutex;
@@ -101,7 +101,7 @@ public:
     static void serialize_environment(Archive& ar)
     {
         if(instance())
-            ar(*instance(), 0);
+            instance()->serialize(ar, TIMEMORY_GET_CLASS_VERSION(tim::env_settings));
     }
 
 private:

@@ -608,9 +608,9 @@ write_settings_info(std::ostream& os, const array_t<bool, N>& opts,
     for(auto& itr : _setting_output)
     {
         // get the description
-        auto ditr = tim::get_setting_descriptions().find(itr.at(0));
-        if(ditr != tim::get_setting_descriptions().end())
-            itr.back() = ditr->second;
+        auto ditr = tim::settings::instance()->find(itr.at(0));
+        if(ditr != tim::settings::instance()->end())
+            itr.back() = ditr->second->get_description();
 
         for(size_t i = 0; i < itr.size(); ++i)
             _widths.at(i) =

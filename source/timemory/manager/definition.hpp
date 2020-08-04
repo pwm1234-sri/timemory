@@ -110,9 +110,9 @@ manager::manager()
 #    if !defined(TIMEMORY_DISABLE_BANNER)
     if(_first && settings::banner())
         printf("#------------------------- tim::manager initialized "
-               "[id=%i][pid=%i] "
-               "-------------------------#\n\n",
-               m_instance_count, process::get_id());
+               "[pid=%i] "
+               "-------------------------#\n",
+               process::get_id());
 #    endif
 
     if(settings::cpu_affinity())
@@ -136,10 +136,10 @@ manager::~manager()
 #    if !defined(TIMEMORY_DISABLE_BANNER)
     if(_last && settings::banner())
     {
-        printf("\n\n#---------------------- tim::manager destroyed "
-               "[rank=%i][id=%i][pid=%i] "
+        printf("#---------------------- tim::manager destroyed "
+               "[rank=%i][pid=%i] "
                "----------------------#\n",
-               m_rank, m_instance_count, process::get_id());
+               m_rank, process::get_id());
     }
 #    endif
 }
@@ -313,7 +313,7 @@ manager::update_metadata_prefix()
     auto _settings = f_settings();
     if(!_settings)
         return;
-    auto _outp_prefix = _settings->get_output_prefix();
+    auto _outp_prefix = _settings->get_global_output_prefix();
     m_metadata_prefix = _outp_prefix;
     if(f_debug())
         PRINT_HERE("[rank=%i][id=%i] metadata prefix: '%s'", m_rank, m_instance_count,
@@ -354,9 +354,9 @@ manager::write_metadata(const char* context)
         return;
     }
 
-    bool _banner      = _settings->m__banner;
-    bool _auto_output = _settings->m__auto_output;
-    bool _file_output = _settings->m__file_output;
+    bool _banner      = _settings->get_banner();
+    bool _auto_output = _settings->get_auto_output();
+    bool _file_output = _settings->get_file_output();
     auto _outp_prefix = _settings->get_output_prefix();
 
     static bool written = false;
@@ -416,10 +416,12 @@ manager::write_metadata(const char* context)
 
     auto fname = settings::compose_output_filename("metadata", "json", false, -1, false,
                                                    m_metadata_prefix);
-    consume_parameters(fname);
+    auto hname = settings::compose_output_filename("functions", "json", false, -1, false,
+                                                   m_metadata_prefix);
 
     if(f_verbose() > 0 || _banner || f_debug())
-        printf("\n[metadata::%s]> Outputting '%s'...\n", context, fname.c_str());
+        printf("\n[metadata::%s]> Outputting '%s' and '%s'...\n", context, fname.c_str(),
+               hname.c_str());
 
     std::ofstream ofs(fname.c_str());
     if(ofs)
@@ -457,8 +459,53 @@ manager::write_metadata(const char* context)
         ofs << std::endl;
     else
         printf("[manager]> Warning! Error opening '%s'...\n", fname.c_str());
-
     ofs.close();
+
+    std::map<std::string, std::set<size_t>> _hashes;
+    if(m_hash_ids && m_hash_aliases)
+    {
+        for(const auto& itr : (*m_hash_aliases))
+        {
+            auto hitr = m_hash_ids->find(itr.second);
+            if(hitr != m_hash_ids->end())
+            {
+                _hashes[hitr->second].insert(itr.first);
+                _hashes[hitr->second].insert(hitr->first);
+            }
+        }
+        for(const auto& itr : (*m_hash_ids))
+            _hashes[itr.second].insert(itr.first);
+    }
+    if(_hashes.empty())
+        return;
+
+    std::ofstream hfs(hname.c_str());
+    if(hfs)
+    {
+        // ensure json write final block during destruction before the file is closed
+        using policy_type = policy::output_archive_t<manager>;
+        auto oa           = policy_type::get(hfs);
+        oa->setNextName("timemory");
+        oa->startNode();
+        {
+            oa->setNextName("functions");
+            oa->startNode();
+            // hash-keys
+            {
+                for(const auto& itr : _hashes)
+                    (*oa)(cereal::make_nvp(itr.first.c_str(), itr.second));
+            }
+            //
+            oa->finishNode();
+        }
+        oa->finishNode();
+    }
+    if(hfs)
+        hfs << std::endl;
+    else
+        printf("[manager]> Warning! Error opening '%s'...\n", hname.c_str());
+
+    hfs.close();
 }
 //
 //--------------------------------------------------------------------------------------//
@@ -632,8 +679,11 @@ extern "C"
             return;
         }
 
-        auto _debug   = tim::settings::debug();
-        auto _verbose = tim::settings::verbose();
+        static auto& _versions =
+            cereal::detail::StaticObject<cereal::detail::Versions>::getInstance();
+        static auto _settings = tim::settings::shared_instance<tim::api::native_tag>();
+        auto        _debug    = (_settings) ? _settings->get_debug() : false;
+        auto        _verbose  = (_settings) ? _settings->get_verbose() : 0;
 
         if(_debug || _verbose > 3)
             printf("[%s]> initializing manager...\n", __FUNCTION__);
@@ -643,7 +693,7 @@ extern "C"
         static auto _prefix      = tim::settings::output_prefix();
         static auto _time_output = tim::settings::time_output();
         static auto _time_format = tim::settings::time_format();
-        tim::consume_parameters(_dir, _prefix, _time_output, _time_format);
+        tim::consume_parameters(_dir, _prefix, _time_output, _time_format, _versions);
 
         static auto              _master = tim::manager::master_instance();
         static thread_local auto _worker = tim::manager::instance();

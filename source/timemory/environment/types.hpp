@@ -30,6 +30,7 @@
 #pragma once
 
 #include "timemory/environment/macros.hpp"
+#include "timemory/utility/types.hpp"
 
 #include <iosfwd>
 #include <iostream>
@@ -44,7 +45,7 @@ namespace tim
 //
 //--------------------------------------------------------------------------------------//
 //
-class TIMEMORY_ENVIRONMENT_DLL env_settings;
+class env_settings;
 //
 //--------------------------------------------------------------------------------------//
 //
@@ -55,13 +56,13 @@ get_env(const std::string& env_id, Tp _default = Tp());
 //--------------------------------------------------------------------------------------//
 //
 template <>
-TIMEMORY_ENVIRONMENT_DLL std::string
-                         get_env(const std::string& env_id, std::string _default);
+std::string
+get_env(const std::string& env_id, std::string _default);
 //
 //--------------------------------------------------------------------------------------//
 //
 template <>
-TIMEMORY_ENVIRONMENT_DLL bool
+bool
 get_env(const std::string& env_id, bool _default);
 //
 //--------------------------------------------------------------------------------------//
@@ -73,18 +74,18 @@ load_env(const std::string& env_id, Tp _default = Tp());
 //--------------------------------------------------------------------------------------//
 //
 template <>
-TIMEMORY_ENVIRONMENT_DLL std::string
-                         load_env(const std::string& env_id, std::string _default);
+std::string
+load_env(const std::string& env_id, std::string _default);
 //
 //--------------------------------------------------------------------------------------//
 //
 template <>
-TIMEMORY_ENVIRONMENT_DLL bool
+bool
 load_env(const std::string& env_id, bool _default);
 //
 //--------------------------------------------------------------------------------------//
 //
-TIMEMORY_ENVIRONMENT_DLL void
+void
 print_env(std::ostream& os = std::cout);
 //
 //--------------------------------------------------------------------------------------//
@@ -96,3 +97,5 @@ set_env(const std::string& env_var, const Tp& _val, int override = 0);
 //--------------------------------------------------------------------------------------//
 //
 }  // namespace tim
+
+TIMEMORY_SET_CLASS_VERSION(0, tim::env_settings)

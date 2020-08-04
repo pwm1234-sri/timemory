@@ -93,7 +93,7 @@ settings::toupper(std::string str)
 //----------------------------------------------------------------------------------//
 //
 TIMEMORY_SETTINGS_LINKAGE(std::string)
-settings::get_input_prefix()
+settings::get_global_input_prefix()
 {
     static auto& _dir    = input_path();
     static auto& _prefix = input_prefix();
@@ -104,7 +104,7 @@ settings::get_input_prefix()
 //----------------------------------------------------------------------------------//
 //
 TIMEMORY_SETTINGS_LINKAGE(std::string)
-settings::get_output_prefix(bool fake)
+settings::get_global_output_prefix(bool fake)
 {
     static auto& _dir         = output_path();
     static auto& _prefix      = output_prefix();
@@ -127,7 +127,7 @@ settings::get_output_prefix(bool fake)
         PRINT_HERE("creating output directory: '%s'", _dir.c_str());
 
     if(fake)
-        tim::consume_parameters(get_input_prefix());
+        tim::consume_parameters(get_global_input_prefix());
 
     auto ret = (fake) ? 0 : makedir(_dir);
     return (ret == 0) ? filepath::osrepr(_dir + std::string("/") + _prefix)
@@ -152,7 +152,7 @@ settings::compose_output_filename(const std::string& _tag, std::string _ext,
                                   bool _mpi_init, const int32_t _mpi_rank, bool fake,
                                   std::string _explicit)
 {
-    auto _prefix = (_explicit.length() > 0) ? _explicit : get_output_prefix(fake);
+    auto _prefix = (_explicit.length() > 0) ? _explicit : get_global_output_prefix(fake);
 
     // if just caching this static variable return
     if(fake)
@@ -197,7 +197,7 @@ settings::compose_input_filename(const std::string& _tag, std::string _ext,
     if(settings::input_prefix().empty())
         settings::input_prefix() = settings::output_prefix();
 
-    auto _prefix = (_explicit.length() > 0) ? _explicit : get_input_prefix();
+    auto _prefix = (_explicit.length() > 0) ? _explicit : get_global_input_prefix();
 
     auto only_ascii = [](char c) { return !isascii(c); };
 
@@ -230,17 +230,47 @@ settings::compose_input_filename(const std::string& _tag, std::string _ext,
 // invocation) can be overwritten
 //
 TIMEMORY_SETTINGS_LINKAGE(void)
-settings::parse()
+settings::parse(std::shared_ptr<settings> _settings)
 {
-    if(suppress_parsing())
+    if(!_settings)
         return;
 
-    for(auto& itr : get_parse_callbacks())
+    if(_settings->get_suppress_parsing())
+        return;
+
+    for(auto& itr : *_settings)
     {
-        if(settings::debug() && settings::verbose() > 0)
+        if(_settings->get_debug() && _settings->get_verbose() > 0)
             std::cerr << "Executing parse callback for: " << itr.first << std::endl;
-        itr.second();
+        itr.second->parse();
     }
+}
+//
+//----------------------------------------------------------------------------------//
+//
+TIMEMORY_SETTINGS_LINKAGE(settings::settings)
+(const settings& rhs)
+: m_data(data_type{})
+, m_command_line(rhs.m_command_line)
+, m_environment(rhs.m_environment)
+{
+    for(auto& itr : rhs.m_data)
+        m_data.insert({ itr.first, itr.second->clone() });
+}
+//
+//----------------------------------------------------------------------------------//
+//
+TIMEMORY_SETTINGS_LINKAGE(settings&)
+settings::operator=(const settings& rhs)
+{
+    if(this == &rhs)
+        return *this;
+
+    for(auto& itr : rhs.m_data)
+        m_data[itr.first] = itr.second->clone();
+    m_command_line = rhs.m_command_line;
+    m_environment  = rhs.m_environment;
+    return *this;
 }
 //
 //----------------------------------------------------------------------------------//

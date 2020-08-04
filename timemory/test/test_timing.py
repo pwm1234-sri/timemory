@@ -105,7 +105,7 @@ class TimemoryTimingTests(unittest.TestCase):
     def test_wall_clock(self):
         """wall_timer
         """
-        if not comp.MonotonicClock.available:
+        if not comp.WallClock.available:
             raise unittest.SkipTest('[{}] not available'.format('wall_clock'))
 
         obj = comp.WallClock(self.shortDescription())

@@ -527,7 +527,7 @@ namespace base
 //
 //--------------------------------------------------------------------------------------//
 //
-struct TIMEMORY_OPERATIONS_DLL print
+struct print
 {
     using this_type   = print;
     using stream_type = std::shared_ptr<utility::stream>;
@@ -558,11 +558,6 @@ struct TIMEMORY_OPERATIONS_DLL print
 
     void set_debug(bool v) { debug = v; }
     void set_update(bool v) { update = v; }
-    void set_file_output(bool v) { file_output = v; }
-    void set_text_output(bool v) { text_output = v; }
-    void set_json_output(bool v) { json_output = v; }
-    void set_dart_output(bool v) { dart_output = v; }
-    void set_plot_output(bool v) { plot_output = v; }
     void set_verbose(int32_t v) { verbose = v; }
     void set_max_call_stack(int64_t v) { max_call_stack = v; }
 
@@ -572,24 +567,85 @@ struct TIMEMORY_OPERATIONS_DLL print
                                : std::min<int64_t>(max_call_stack, settings::max_depth());
     }
 
+    bool dart_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_dart_output();
+    }
+    bool file_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_file_output();
+    }
+    bool cout_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_cout_output();
+    }
+    bool json_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return (m_settings->get_json_output() || json_forced) &&
+               m_settings->get_file_output();
+    }
+    bool text_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_text_output() && m_settings->get_file_output();
+    }
+    bool plot_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_plot_output() && m_settings->get_json_output() &&
+               m_settings->get_file_output();
+    }
+    bool flame_output()
+    {
+        if(!m_settings)
+        {
+            PRINT_HERE("%s", "Null pointer to settings! Disabling");
+            return false;
+        }
+        return m_settings->get_flamegraph_output() && m_settings->get_file_output();
+    }
+
 protected:
     // default initialized
-    bool    debug          = settings::debug();
-    bool    update         = true;
-    bool    json_forced    = false;
-    bool    file_output    = settings::file_output();
-    bool    cout_output    = settings::cout_output();
-    bool    json_output    = (settings::json_output() || json_forced) && file_output;
-    bool    text_output    = settings::text_output() && file_output;
-    bool    dart_output    = settings::dart_output();
-    bool    plot_output    = settings::plot_output() && json_output;
-    bool    flame_output   = settings::flamegraph_output() && file_output;
-    bool    node_init      = dmp::is_initialized();
-    int32_t node_rank      = dmp::rank();
-    int32_t node_size      = dmp::size();
-    int32_t verbose        = settings::verbose();
-    int64_t max_depth      = 0;
-    int64_t max_call_stack = settings::max_depth();
+    using settings_ptr          = std::shared_ptr<settings>;
+    bool         debug          = settings::debug();
+    bool         update         = true;
+    bool         json_forced    = false;
+    bool         node_init      = dmp::is_initialized();
+    int32_t      node_rank      = dmp::rank();
+    int32_t      node_size      = dmp::size();
+    int32_t      verbose        = settings::verbose();
+    int64_t      max_depth      = 0;
+    int64_t      max_call_stack = settings::max_depth();
+    settings_ptr m_settings     = settings::shared_instance<TIMEMORY_API>();
 
 protected:
     int64_t     data_concurrency  = 1;
@@ -653,33 +709,33 @@ struct print<Tp, true> : public base::print
         if(node_init && node_rank > 0)
             return;
 
-        if(file_output)
+        if(file_output())
         {
-            if(json_output)
+            if(json_output())
                 print_json(json_outfname, node_results, data_concurrency);
-            if(text_output)
+            if(text_output())
                 print_text(text_outfname, data_stream);
-            if(plot_output)
+            if(plot_output())
                 print_plot(json_outfname, "");
         }
 
-        if(cout_output)
+        if(cout_output())
             print_cout(data_stream);
         else
             printf("\n");
 
-        if(dart_output)
+        if(dart_output())
             print_dart();
 
         if(!node_input.empty() && !node_delta.empty() && settings::diff_output())
         {
-            if(file_output)
+            if(file_output())
             {
-                if(json_output)
+                if(json_output())
                     print_json(json_diffname, node_delta, data_concurrency);
-                if(text_output)
+                if(text_output())
                     print_text(text_diffname, diff_stream);
-                if(plot_output)
+                if(plot_output())
                 {
                     std::stringstream ss;
                     ss << "Difference vs. " << json_inpfname;
@@ -693,7 +749,7 @@ struct print<Tp, true> : public base::print
                 }
             }
 
-            if(cout_output)
+            if(cout_output())
                 print_cout(diff_stream);
             else
                 printf("\n");
