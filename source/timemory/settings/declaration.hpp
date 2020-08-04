@@ -67,14 +67,13 @@ class manager;
 //
 //--------------------------------------------------------------------------------------//
 //
-struct TIMEMORY_SETTINGS_DLL settings
+struct settings
 {
     // this is the list of the current and potentially used data types
     using data_type_list_t =
         tim::type_list<bool, string_t, int16_t, int32_t, int64_t, uint16_t, uint32_t,
                        uint64_t, size_t, float, double>;
     friend class manager;
-    using string_t       = std::string;
     using strvector_t    = std::vector<std::string>;
     using strmap_t       = std::map<std::string, std::string>;
     using value_type     = std::shared_ptr<vsettings>;
