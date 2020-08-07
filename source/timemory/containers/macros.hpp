@@ -77,7 +77,7 @@
 //
 //--------------------------------------------------------------------------------------//
 //
-#if !defined(TIMEMORY_EXTERN_BUNDLE)
+#if !defined(TIMEMORY_EXTERN_BUNDLE) && !defined(_WINDOWS)
 #    if defined(TIMEMORY_SOURCE) && defined(TIMEMORY_CONTAINERS_SOURCE)
 #        define TIMEMORY_EXTERN_BUNDLE(...)                                              \
             TIMEMORY_INSTANTIATE_EXTERN_BUNDLE(__VA_ARGS__)
@@ -86,8 +86,8 @@
 #    else
 #        define TIMEMORY_EXTERN_BUNDLE(...)
 #    endif
-//--------------------------------------------------------------------------------------//
-//
+#elif !defined(TIMEMORY_EXTERN_BUNDLE) && defined(_WINDOWS)
+#    define TIMEMORY_EXTERN_BUNDLE(...)
 #endif
 //
 //--------------------------------------------------------------------------------------//
