@@ -22,6 +22,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#if !defined(TIMEMORY_LIBRARY_SOURCE)
+#    define TIMEMORY_LIBRARY_SOURCE
+#endif
+
 #include "timemory/compat/library.h"
 #include "timemory/library.h"
 #include "timemory/runtime/configure.hpp"
@@ -44,9 +48,6 @@ using namespace tim::component;
 
 extern "C"
 {
-    typedef void (*timemory_create_func_t)(const char*, uint64_t*, int, int*);
-    typedef void (*timemory_delete_func_t)(uint64_t);
-
     timemory_create_func_t timemory_create_function = nullptr;
     timemory_delete_func_t timemory_delete_function = nullptr;
 }
@@ -257,7 +258,7 @@ extern "C"
         tim::settings::enabled() = false;
 
         // set the finalization state to true
-        tim::dmp::is_finalized() = true;
+        tim::dmp::set_finalized(true);
 
         // reset manager
         tim::manager::instance().reset();

@@ -24,8 +24,6 @@
 
 /**
  * \headerfile "timemory/components/base/templates.hpp"
- * \brief Defines the template functions for the static polymorphic base for the
- * components
  *
  */
 
@@ -219,7 +217,7 @@ base<Tp, Value>::get_display_unit()
 //
 template <typename Tp, typename Value>
 template <typename Up, typename Vp,
-          enable_if_t<(trait::implements_storage<Up, Vp>::value), int>>
+          enable_if_t<(trait::uses_value_storage<Up, Vp>::value), int>>
 void
 base<Tp, Value>::print(std::ostream& os) const
 {
@@ -230,7 +228,7 @@ base<Tp, Value>::print(std::ostream& os) const
 //
 template <typename Tp, typename Value>
 template <typename Up, typename Vp,
-          enable_if_t<!(trait::implements_storage<Up, Vp>::value), int>>
+          enable_if_t<!(trait::uses_value_storage<Up, Vp>::value), int>>
 void
 base<Tp, Value>::print(std::ostream&) const
 {}

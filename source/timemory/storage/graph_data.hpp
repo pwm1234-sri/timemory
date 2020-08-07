@@ -23,9 +23,6 @@
 // SOFTWARE.
 
 /** \headerfile "timemory/storage/graph_data.hpp"
- * \brief tim::graph instance + current node + head note + sea-level. Sea-level is
- * defined as the node depth after a fork from another graph instance and is only
- * relevant for worker-threads)
  *
  */
 
@@ -54,6 +51,10 @@ namespace tim
 //  graph instance + current node + head node
 //
 //--------------------------------------------------------------------------------------//
+/// \class tim::graph_data
+/// \brief \ref tim::graph instance + current node + head note + sea-level. Sea-level is
+/// defined as the node depth after a fork from another graph instance and is only
+/// relevant for worker-threads)
 
 template <typename NodeT>
 class graph_data

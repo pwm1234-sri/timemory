@@ -24,8 +24,6 @@
 
 /**
  * \headerfile "timemory/general/source_location.hpp"
- * \brief Provides source location information and variadic joining of source location
- * tags
  *
  */
 
@@ -46,7 +44,9 @@
 namespace tim
 {
 //======================================================================================//
-
+/// \class tim::source_location
+/// \brief Provides source location information and variadic joining of source location
+/// tags
 class source_location
 {
 public:

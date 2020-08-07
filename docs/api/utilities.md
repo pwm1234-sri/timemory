@@ -1,4 +1,4 @@
-# Utilities
+# C++ Utilities
 
 ```eval_rst
 .. toctree::
@@ -58,4 +58,16 @@ void Func2()
 .. doxygenstruct:: tim::quirk::tree_scope
 .. doxygenstruct:: tim::quirk::flat_scope
 .. doxygenstruct:: tim::quirk::timeline_scope
+```
+
+## Sampling
+
+```eval_rst
+.. doxygenfile:: timemory/sampling/sampler.hpp
+```
+
+## Conditional
+
+```eval_rst
+.. doxygenfile:: timemory/utility/conditional.hpp
 ```

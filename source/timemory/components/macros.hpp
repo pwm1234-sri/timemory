@@ -32,6 +32,7 @@
 #include "timemory/components/metadata.hpp"
 #include "timemory/components/properties.hpp"
 #include "timemory/dll.hpp"
+#include "timemory/macros.hpp"
 
 #include <string>
 #include <unordered_set>
@@ -115,6 +116,30 @@
         {                                                                                \
         template <__VA_ARGS__>                                                           \
         struct NAME;                                                                     \
+        }                                                                                \
+        }
+#endif
+//
+//--------------------------------------------------------------------------------------//
+//
+/**
+ * \macro TIMEMORY_TEMPLATE_COMPONENT
+ * \brief Declare a templated component type in the tim::component namespace
+ */
+#if !defined(TIMEMORY_TEMPLATE_COMPONENT)
+#    define TIMEMORY_TEMPLATE_COMPONENT(NAME, TEMPLATE_PARAM, ...)                       \
+        namespace tim                                                                    \
+        {                                                                                \
+        namespace component                                                              \
+        {                                                                                \
+        template <TEMPLATE_PARAM>                                                        \
+        struct NAME;                                                                     \
+        }                                                                                \
+        namespace trait                                                                  \
+        {                                                                                \
+        template <TEMPLATE_PARAM>                                                        \
+        struct is_component<component::NAME<__VA_ARGS__>> : true_type                    \
+        {};                                                                              \
         }                                                                                \
         }
 #endif
@@ -232,110 +257,6 @@
 
 //======================================================================================//
 //
-//      GENERIC TYPE-TRAIT SPECIALIZATION (for true_type/false_type traits)
-//
-//======================================================================================//
-
-#if !defined(TIMEMORY_DEFINE_CONCRETE_TRAIT)
-#    define TIMEMORY_DEFINE_CONCRETE_TRAIT(TRAIT, COMPONENT, VALUE)                      \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <>                                                                      \
-        struct TRAIT<COMPONENT> : VALUE                                                  \
-        {};                                                                              \
-        }                                                                                \
-        }
-#endif
-//
-//--------------------------------------------------------------------------------------//
-//
-#if !defined(TIMEMORY_DEFINE_TEMPLATE_TRAIT)
-#    define TIMEMORY_DEFINE_TEMPLATE_TRAIT(TRAIT, COMPONENT, VALUE, TYPE)                \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <TYPE T>                                                                \
-        struct TRAIT<COMPONENT<T>> : VALUE                                               \
-        {};                                                                              \
-        }                                                                                \
-        }
-#endif
-//
-//--------------------------------------------------------------------------------------//
-//
-#if !defined(TIMEMORY_DEFINE_VARIADIC_TRAIT)
-#    define TIMEMORY_DEFINE_VARIADIC_TRAIT(TRAIT, COMPONENT, VALUE, TYPE)                \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <TYPE... T>                                                             \
-        struct TRAIT<COMPONENT<T...>> : VALUE                                            \
-        {};                                                                              \
-        }                                                                                \
-        }
-#endif
-
-//======================================================================================//
-//
-//      STATISTICS TYPE-TRAIT SPECIALIZATION
-//
-//======================================================================================//
-
-#if !defined(TIMEMORY_STATISTICS_TYPE)
-#    define TIMEMORY_STATISTICS_TYPE(COMPONENT, TYPE)                                    \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <>                                                                      \
-        struct statistics<COMPONENT>                                                     \
-        {                                                                                \
-            using type = TYPE;                                                           \
-        };                                                                               \
-        }                                                                                \
-        }
-#endif
-//
-//--------------------------------------------------------------------------------------//
-//
-#if !defined(TIMEMORY_TEMPLATE_STATISTICS_TYPE)
-#    define TIMEMORY_TEMPLATE_STATISTICS_TYPE(COMPONENT, TYPE, TEMPLATE_TYPE)            \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <TEMPLATE_TYPE T>                                                       \
-        struct statistics<COMPONENT<T>>                                                  \
-        {                                                                                \
-            using type = TYPE;                                                           \
-        };                                                                               \
-        }                                                                                \
-        }
-#endif
-//
-//--------------------------------------------------------------------------------------//
-//
-#if !defined(TIMEMORY_VARIADIC_STATISTICS_TYPE)
-#    define TIMEMORY_VARIADIC_STATISTICS_TYPE(COMPONENT, TYPE, TEMPLATE_TYPE)            \
-        namespace tim                                                                    \
-        {                                                                                \
-        namespace trait                                                                  \
-        {                                                                                \
-        template <TEMPLATE_TYPE... T>                                                    \
-        struct statistics<COMPONENT<T...>>                                               \
-        {                                                                                \
-            using type = TYPE;                                                           \
-        };                                                                               \
-        }                                                                                \
-        }
-#endif
-
-//======================================================================================//
-//
 //      EXTERN TEMPLATE DECLARE AND INSTANTIATE
 //
 //======================================================================================//
@@ -376,13 +297,13 @@
         namespace tim                                                                                          \
         {                                                                                                      \
         extern template class impl::storage<TYPE,                                                              \
-                                            trait::implements_storage<TYPE>::value>;                           \
+                                            trait::uses_value_storage<TYPE>::value>;                           \
         extern template class storage<TYPE, typename TYPE::value_type>;                                        \
         extern template class singleton<                                                                       \
-            impl::storage<TYPE, trait::implements_storage<TYPE>::value>,                                       \
-            std::unique_ptr<impl::storage<TYPE, trait::implements_storage<TYPE>::value>,                       \
+            impl::storage<TYPE, trait::uses_value_storage<TYPE>::value>,                                       \
+            std::unique_ptr<impl::storage<TYPE, trait::uses_value_storage<TYPE>::value>,                       \
                             impl::storage_deleter<impl::storage<                                               \
-                                TYPE, trait::implements_storage<TYPE>::value>>>>;                              \
+                                TYPE, trait::uses_value_storage<TYPE>::value>>>>;                              \
         extern template storage_singleton<storage<TYPE, typename TYPE::value_type>>*                           \
                                             get_storage_singleton<storage<TYPE, typename TYPE::value_type>>(); \
         extern template storage_initializer storage_initializer::get<TYPE>();                                  \
@@ -395,13 +316,13 @@
 #    define TIMEMORY_INSTANTIATE_EXTERN_STORAGE(TYPE, VAR)                                              \
         namespace tim                                                                                   \
         {                                                                                               \
-        template class impl::storage<TYPE, trait::implements_storage<TYPE>::value>;                     \
+        template class impl::storage<TYPE, trait::uses_value_storage<TYPE>::value>;                     \
         template class storage<TYPE, typename TYPE::value_type>;                                        \
         template class singleton<                                                                       \
-            impl::storage<TYPE, trait::implements_storage<TYPE>::value>,                                \
-            std::unique_ptr<impl::storage<TYPE, trait::implements_storage<TYPE>::value>,                \
+            impl::storage<TYPE, trait::uses_value_storage<TYPE>::value>,                                \
+            std::unique_ptr<impl::storage<TYPE, trait::uses_value_storage<TYPE>::value>,                \
                             impl::storage_deleter<impl::storage<                                        \
-                                TYPE, trait::implements_storage<TYPE>::value>>>>;                       \
+                                TYPE, trait::uses_value_storage<TYPE>::value>>>>;                       \
         template storage_singleton<storage<TYPE, typename TYPE::value_type>>*                           \
                                      get_storage_singleton<storage<TYPE, typename TYPE::value_type>>(); \
         template storage_initializer storage_initializer::get<TYPE>();                                  \
@@ -489,14 +410,14 @@
 //
 #    if !defined(TIMEMORY_EXTERN_OPERATIONS)
 #        define TIMEMORY_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)                     \
-            TIMEMORY_INSTANTIATE_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)
+            TIMEMORY_INSTANTIATE_EXTERN_OPERATIONS(TIMEMORY_ESC(COMPONENT_NAME), HAS_DATA)
 #    endif
 //
 //--------------------------------------------------------------------------------------//
 //
 #    if !defined(TIMEMORY_EXTERN_STORAGE)
 #        define TIMEMORY_EXTERN_STORAGE(COMPONENT_NAME, VAR)                             \
-            TIMEMORY_INSTANTIATE_EXTERN_STORAGE(COMPONENT_NAME, VAR)
+            TIMEMORY_INSTANTIATE_EXTERN_STORAGE(TIMEMORY_ESC(COMPONENT_NAME), VAR)
 #    endif
 //
 //--------------------------------------------------------------------------------------//
@@ -513,14 +434,14 @@
 //
 #    if !defined(TIMEMORY_EXTERN_OPERATIONS)
 #        define TIMEMORY_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)                     \
-            TIMEMORY_DECLARE_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)
+            TIMEMORY_DECLARE_EXTERN_OPERATIONS(TIMEMORY_ESC(COMPONENT_NAME), HAS_DATA)
 #    endif
 //
 //--------------------------------------------------------------------------------------//
 //
 #    if !defined(TIMEMORY_EXTERN_STORAGE)
 #        define TIMEMORY_EXTERN_STORAGE(COMPONENT_NAME, VAR)                             \
-            TIMEMORY_DECLARE_EXTERN_STORAGE(COMPONENT_NAME, VAR)
+            TIMEMORY_DECLARE_EXTERN_STORAGE(TIMEMORY_ESC(COMPONENT_NAME), VAR)
 #    endif
 //
 //--------------------------------------------------------------------------------------//
@@ -560,9 +481,32 @@
 #if !defined(TIMEMORY_EXTERN_COMPONENT)
 #    define TIMEMORY_EXTERN_COMPONENT(NAME, HAS_DATA, ...)                               \
         TIMEMORY_EXTERN_TEMPLATE(                                                        \
-            struct tim::component::base<tim::component::NAME, __VA_ARGS__>)              \
-        TIMEMORY_EXTERN_OPERATIONS(component::NAME, HAS_DATA)                            \
-        TIMEMORY_EXTERN_STORAGE(component::NAME, NAME)
+            struct tim::component::base<TIMEMORY_ESC(tim::component::NAME),              \
+                                        __VA_ARGS__>)                                    \
+        TIMEMORY_EXTERN_OPERATIONS(TIMEMORY_ESC(component::NAME), HAS_DATA)              \
+        TIMEMORY_EXTERN_STORAGE(TIMEMORY_ESC(component::NAME), NAME)
+#endif
+
+//======================================================================================//
+
+#if !defined(TIMEMORY_DECLARE_EXTERN_COMPONENT)
+#    define TIMEMORY_DECLARE_EXTERN_COMPONENT(NAME, HAS_DATA, ...)                       \
+        TIMEMORY_DECLARE_EXTERN_TEMPLATE(                                                \
+            struct tim::component::base<TIMEMORY_ESC(tim::component::NAME),              \
+                                        __VA_ARGS__>)                                    \
+        TIMEMORY_DECLARE_EXTERN_OPERATIONS(TIMEMORY_ESC(component::NAME), HAS_DATA)      \
+        TIMEMORY_DECLARE_EXTERN_STORAGE(TIMEMORY_ESC(component::NAME), NAME)
+#endif
+
+//======================================================================================//
+
+#if !defined(TIMEMORY_INSTANTIATE_EXTERN_COMPONENT)
+#    define TIMEMORY_INSTANTIATE_EXTERN_COMPONENT(NAME, HAS_DATA, ...)                   \
+        TIMEMORY_INSTANTIATE_EXTERN_TEMPLATE(                                            \
+            struct tim::component::base<TIMEMORY_ESC(tim::component::NAME),              \
+                                        __VA_ARGS__>)                                    \
+        TIMEMORY_INSTANTIATE_EXTERN_OPERATIONS(TIMEMORY_ESC(component::NAME), HAS_DATA)  \
+        TIMEMORY_INSTANTIATE_EXTERN_STORAGE(TIMEMORY_ESC(component::NAME), NAME)
 #endif
 
 //======================================================================================//

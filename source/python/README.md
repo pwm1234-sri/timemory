@@ -3,7 +3,7 @@
 The timemory python interface is generated via the PyBind11 library. The combination of these two template-based
 libraries provides a feature-rich interface which combines the flexibility of python with the performance of C++.
 
-## Desciption
+## Description
 
 The python interface provides several pre-configured scoped components in bundles and profiler sub-packages which can be used as decorators or context-managers. The timemory settings be controlled either directly via the `settings` sub-package or by using environment variables. The `component` subpackage contains the individual components that can be used for custom instrumentation. Further, the `hardware_counters` sub-package provides API interface to accessing hardware counters (requires PAPI and/or CUDA support). The `mpi` subpackage provides bindings to timemory's MPI support. The generic data `plotting` (such as plotting instrumentation graphs) and `roofline` plotting are available in subsequent sub-packages.
 

@@ -23,7 +23,6 @@
 // SOFTWARE.
 
 /** \headerfile "timemory/variadic/base_bundle.hpp"
- * This is the generic base class for a variadic bundle of components
  *
  */
 

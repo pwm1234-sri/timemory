@@ -164,7 +164,7 @@ TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::current_peak_rss, false_
 //
 #if defined(_UNIX)
 
-/// \param TIMEMORY_USE_UNMAINTAINED_RUSAGE
+/// \macro TIMEMORY_USE_UNMAINTAINED_RUSAGE
 /// \brief This macro enables the globally disable rusage structures that are
 /// unmaintained by the Linux kernel and are zero on macOS
 ///

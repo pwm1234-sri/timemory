@@ -64,13 +64,13 @@ struct vsettings
 {
     using parser_t = argparse::argument_parser;
 
-    vsettings(const std::string& _name = "", const std::string& _environ = "",
+    vsettings(const std::string& _name = "", const std::string& _env_name = "",
               const std::string& _descript = "", std::vector<std::string> _cmdline = {},
               int32_t _count = -1, int32_t _max_count = -1)
     : m_count(_count)
     , m_max_count(_max_count)
     , m_name(_name)
-    , m_environ(_environ)
+    , m_env_name(_env_name)
     , m_description(_descript)
     , m_cmdline(_cmdline)
     {}
@@ -82,7 +82,7 @@ struct vsettings
     virtual std::shared_ptr<vsettings> clone()                                  = 0;
 
     const auto& get_name() const { return m_name; }
-    const auto& get_env_name() const { return m_environ; }
+    const auto& get_env_name() const { return m_env_name; }
     const auto& get_description() const { return m_description; }
     const auto& get_command_line() const { return m_cmdline; }
     const auto& get_count() const { return m_count; }
@@ -100,7 +100,7 @@ protected:
     int32_t                  m_count       = -1;
     int32_t                  m_max_count   = -1;
     std::string              m_name        = "";
-    std::string              m_environ     = "";
+    std::string              m_env_name    = "";
     std::string              m_description = "";
     std::vector<std::string> m_cmdline     = {};
 };
@@ -133,7 +133,7 @@ struct tsettings : public vsettings
     const Tp& get() const { return m_value; }
     void      set(Tp&& _value) { m_value = std::forward<Tp>(_value); }
 
-    virtual void parse() final { set(get_env<Tp>(m_environ, get())); }
+    virtual void parse() final { set(get_env<Tp>(m_env_name, get())); }
 
     virtual void add_argument(argparse::argument_parser& p) final
     {
@@ -150,7 +150,7 @@ struct tsettings : public vsettings
 
     virtual std::shared_ptr<vsettings> clone() final
     {
-        return std::make_shared<tsettings<Tp>>(m_value, m_name, m_environ, m_description,
+        return std::make_shared<tsettings<Tp>>(m_value, m_name, m_env_name, m_description,
                                                m_cmdline, m_count, m_max_count);
     }
 
@@ -159,7 +159,7 @@ struct tsettings : public vsettings
     void serialize(Archive& ar, const unsigned int)
     {
         ar(cereal::make_nvp("name", m_name));
-        ar(cereal::make_nvp("environ", m_environ));
+        ar(cereal::make_nvp("environ", m_env_name));
         ar(cereal::make_nvp("description", m_description));
         ar(cereal::make_nvp("count", m_count));
         ar(cereal::make_nvp("max_count", m_max_count));
@@ -223,7 +223,7 @@ private:
 private:
     using base_type::m_count;
     using base_type::m_description;
-    using base_type::m_environ;
+    using base_type::m_env_name;
     using base_type::m_max_count;
     using base_type::m_name;
     using base_type::m_type_index;

@@ -126,10 +126,12 @@
 //
 //======================================================================================//
 
-#if defined(TIMEMORY_USE_VISIBILITY)
-#    define TIMEMORY_VISIBILITY(mode) __attribute__((visibility(mode)))
-#else
-#    define TIMEMORY_VISIBILITY(mode)
+#if !defined(TIMEMORY_VISIBILITY)
+#    if defined(TIMEMORY_USE_VISIBILITY)
+#        define TIMEMORY_VISIBILITY(mode) __attribute__((visibility(mode)))
+#    else
+#        define TIMEMORY_VISIBILITY(mode)
+#    endif
 #endif
 
 //======================================================================================//

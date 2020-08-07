@@ -232,7 +232,7 @@ public:
     const array_t& get_data() const { return m_data; }
 
 public:
-    /// \fn configure
+    /// \fn void configure(std::set<int>, int)
     /// \brief Set up the sampler
     static void configure(std::set<int> _signals, int _verbose = 1);
     static void configure(int _signal = SIGALRM, int _verbose = 1)
@@ -240,16 +240,16 @@ public:
         configure({ _signal }, _verbose);
     }
 
-    /// \fn ignore
+    /// \fn void ignore(std::set<int>)
     /// \brief Ignore the signals
     static void ignore(std::set<int> _signals = {});
 
-    /// \fn clear
+    /// \fn void clear()
     /// \brief Clear all signals. Recommended to call ignore() prior to clearing all the
     /// signals
     static void clear() { get_persistent_data().m_signals.clear(); }
 
-    /// \fn pause
+    /// \fn void pause()
     /// \brief Pause until a signal is delivered
     static void pause()
     {
@@ -257,8 +257,14 @@ public:
             ::pause();
     }
 
-    /// \fn wait
+    /// \fn void wait(pid_t pid, int v, bool d, Func&& func)
+    /// \param pid[in] The target process identifier to wait on
+    /// \param v[in] the verbosity
+    /// \param d[in] debugging messages
+    /// \param func[in] custom function for evaluated when to return
+    ///
     /// \brief Wait function with an optional user callback of type:
+    ///
     /// \code{.cpp}
     ///     bool (*)(int a, int b)
     /// \endcode
@@ -295,38 +301,39 @@ public:
                     std::forward<Func>(_callback));
     }
 
-    /// \fn set_flags
+    /// \fn void set_flags(int flags)
+    /// \param flags[in] the sigaction flags to use
     /// \brief Set the sigaction flags, e.g. SA_RESTART | SA_SIGINFO
     static void set_flags(int _flags) { get_persistent_data().m_flags = _flags; }
 
-    /// \fn set_delay
+    /// \fn void set_delay(double)
     /// \brief Value, expressed in seconds, that sets the length of time the sampler
     /// waits before starting sampling of the relevant measurements
-    static void set_delay(const double& fdelay);
+    static void set_delay(double fdelay);
 
-    /// \fn set_freq
+    /// \fn void set_freq(double)
     /// \brief Value, expressed in 1/seconds, expressed in 1/seconds, that sets the
     /// frequency that the sampler samples the relevant measurements
-    static void set_frequency(const double& ffreq);
+    static void set_frequency(double ffreq);
 
-    /// \fn set_rate
+    /// \fn void set_rate(double)
     /// \brief Value, expressed in number of interupts per second, that configures the
     /// frequency that the sampler samples the relevant measurements
-    static void set_rate(const double& frate) { set_frequency(1.0 / frate); }
+    static void set_rate(double frate) { set_frequency(1.0 / frate); }
 
-    /// \fn get_delay
+    /// \fn int64_t get_delay(int64_t)
     /// \brief Get the delay of the sampler
     static int64_t get_delay(int64_t units = units::usec);
 
-    /// \fn get_frequency
+    /// \fn int64_t get_frequency(int64_t)
     /// \brief Get the frequency of the sampler
     static int64_t get_frequency(int64_t units = units::usec);
 
-    /// \fn get_itimer
+    /// \fn int get_itimer(int)
     /// \brief Returns the itimer value associated with the given signal
     static int get_itimer(int _signal);
 
-    /// \fn check_itimer
+    /// \fn bool check_itimer(int, bool)
     /// \brief Checks to see if there was an error setting or getting itimer val
     static bool check_itimer(int _stat, bool _throw_exception = false);
 
@@ -866,7 +873,7 @@ sampler<CompT<Types...>, N, SigIds...>::wait(const pid_t wait_pid, int _verbose,
 //
 template <template <typename...> class CompT, size_t N, typename... Types, int... SigIds>
 void
-sampler<CompT<Types...>, N, SigIds...>::set_delay(const double& fdelay)
+sampler<CompT<Types...>, N, SigIds...>::set_delay(double fdelay)
 {
     get_persistent_data().m_freq = fdelay;
     int delay_sec                = double(fdelay * units::usec) / units::usec;
@@ -884,7 +891,7 @@ sampler<CompT<Types...>, N, SigIds...>::set_delay(const double& fdelay)
 //
 template <template <typename...> class CompT, size_t N, typename... Types, int... SigIds>
 void
-sampler<CompT<Types...>, N, SigIds...>::set_frequency(const double& ffreq)
+sampler<CompT<Types...>, N, SigIds...>::set_frequency(double ffreq)
 {
     get_persistent_data().m_freq = ffreq;
     int freq_sec                 = double(ffreq * units::usec) / units::usec;

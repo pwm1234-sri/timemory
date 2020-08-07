@@ -62,7 +62,7 @@ invoke_preinit(long)
 //--------------------------------------------------------------------------------------//
 //
 template <typename T>
-storage_initializer
+enable_if_t<trait::uses_storage<T>::value, storage_initializer>
 storage_initializer::get()
 {
     auto library_ctor = tim::get_env<bool>("TIMEMORY_LIBRARY_CTOR", true);
@@ -76,18 +76,29 @@ storage_initializer::get()
 
     using storage_type = storage<T, typename T::value_type>;
 
-    static auto _master = []() {
-        consume_parameters(storage_type::master_instance());
-        return storage_initializer{};
-    }();
-
-    static thread_local auto _worker = []() {
-        consume_parameters(storage_type::instance());
-        return storage_initializer{};
-    }();
-
+    static auto _master = (storage_type::master_instance(), storage_initializer{});
+    static thread_local auto _worker = (storage_type::instance(), storage_initializer{});
     consume_parameters(_master);
+
     return _worker;
+}
+//
+//--------------------------------------------------------------------------------------//
+//
+template <typename T>
+enable_if_t<!trait::uses_storage<T>::value, storage_initializer>
+storage_initializer::get()
+{
+    return storage_initializer{};
+}
+//
+//--------------------------------------------------------------------------------------//
+//
+template <size_t Idx>
+storage_initializer
+storage_initializer::get()
+{
+    return storage_initializer::get<component::enumerator_t<Idx>>();
 }
 //
 //--------------------------------------------------------------------------------------//

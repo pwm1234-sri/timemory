@@ -56,8 +56,9 @@ struct generic_operator
 
     TIMEMORY_DELETED_OBJECT(generic_operator)
 
+private:
     template <typename Up>
-    TIMEMORY_ALWAYS_INLINE static void check()
+    static void check()
     {
         using U = std::decay_t<std::remove_pointer_t<Up>>;
         static_assert(std::is_same<U, type>::value, "Error! Up != type");
@@ -69,10 +70,11 @@ struct generic_operator
     //
     //----------------------------------------------------------------------------------//
 
+public:
     template <typename Up, typename... Args, typename Rp = type,
-              enable_if_t<(trait::is_available<Rp>::value), int> = 0,
-              enable_if_t<(std::is_pointer<Up>::value), int>     = 0>
-    TIMEMORY_ALWAYS_INLINE explicit generic_operator(Up obj, Args&&... args)
+              enable_if_t<trait::is_available<Rp>::value, int> = 0,
+              enable_if_t<std::is_pointer<Up>::value, int>     = 0>
+    explicit generic_operator(Up obj, Args&&... args)
     {
         check<Up>();
         if(obj)
@@ -80,9 +82,9 @@ struct generic_operator
     }
 
     template <typename Up, typename... Args, typename Rp = type,
-              enable_if_t<(trait::is_available<Rp>::value), int> = 0,
-              enable_if_t<(std::is_pointer<Up>::value), int>     = 0>
-    TIMEMORY_ALWAYS_INLINE explicit generic_operator(Up obj, Up rhs, Args&&... args)
+              enable_if_t<trait::is_available<Rp>::value, int> = 0,
+              enable_if_t<std::is_pointer<Up>::value, int>     = 0>
+    explicit generic_operator(Up obj, Up rhs, Args&&... args)
     {
         check<Up>();
         if(obj && rhs)
@@ -91,6 +93,7 @@ struct generic_operator
 
     //----------------------------------------------------------------------------------//
 
+private:
     template <typename Up, typename... Args>
     TIMEMORY_ALWAYS_INLINE auto pointer_sfinae(Up obj, int, int, Args&&... args)
         -> decltype(Op(*obj, std::forward<Args>(args)...), void())
@@ -135,19 +138,20 @@ struct generic_operator
     //
     //----------------------------------------------------------------------------------//
 
+public:
     template <typename Up, typename... Args, typename Rp = Tp,
-              enable_if_t<(trait::is_available<Rp>::value), int> = 0,
-              enable_if_t<!(std::is_pointer<Up>::value), int>    = 0>
-    TIMEMORY_ALWAYS_INLINE explicit generic_operator(Up& obj, Args&&... args)
+              enable_if_t<trait::is_available<Rp>::value, int> = 0,
+              enable_if_t<!std::is_pointer<Up>::value, int>    = 0>
+    explicit generic_operator(Up& obj, Args&&... args)
     {
         check<Up>();
         sfinae(obj, 0, 0, std::forward<Args>(args)...);
     }
 
     template <typename Up, typename... Args, typename Rp = Tp,
-              enable_if_t<(trait::is_available<Rp>::value), int> = 0,
-              enable_if_t<!(std::is_pointer<Up>::value), int>    = 0>
-    TIMEMORY_ALWAYS_INLINE explicit generic_operator(Up& obj, Up& rhs, Args&&... args)
+              enable_if_t<trait::is_available<Rp>::value, int> = 0,
+              enable_if_t<!std::is_pointer<Up>::value, int>    = 0>
+    explicit generic_operator(Up& obj, Up& rhs, Args&&... args)
     {
         check<Up>();
         sfinae(obj, rhs, 0, 0, std::forward<Args>(args)...);
@@ -155,6 +159,7 @@ struct generic_operator
 
     //----------------------------------------------------------------------------------//
 
+private:
     template <typename Up, typename... Args>
     TIMEMORY_ALWAYS_INLINE auto sfinae(Up& obj, int, int, Args&&... args)
         -> decltype(Op(obj, std::forward<Args>(args)...), void())
@@ -170,7 +175,7 @@ struct generic_operator
     }
 
     template <typename Up, typename... Args,
-              enable_if_t<(std::is_pointer<Up>::value), int> = 0>
+              enable_if_t<std::is_pointer<Up>::value, int> = 0>
     TIMEMORY_ALWAYS_INLINE void sfinae(Up& obj, long, long, Args&&... args)
     {
         // some operations want a raw pointer, e.g. generic_deleter
@@ -178,7 +183,7 @@ struct generic_operator
     }
 
     template <typename Up, typename... Args,
-              enable_if_t<!(std::is_pointer<Up>::value), int> = 0>
+              enable_if_t<!std::is_pointer<Up>::value, int> = 0>
     TIMEMORY_ALWAYS_INLINE void sfinae(Up&, long, long, Args&&...)
     {}
 
@@ -199,7 +204,7 @@ struct generic_operator
     }
 
     template <typename Up, typename... Args,
-              enable_if_t<(std::is_pointer<Up>::value), int> = 0>
+              enable_if_t<std::is_pointer<Up>::value, int> = 0>
     TIMEMORY_ALWAYS_INLINE void sfinae(Up& obj, Up& rhs, long, long, Args&&... args)
     {
         // some operations want a raw pointer, e.g. generic_deleter
@@ -207,7 +212,7 @@ struct generic_operator
     }
 
     template <typename Up, typename... Args,
-              enable_if_t<!(std::is_pointer<Up>::value), int> = 0>
+              enable_if_t<!std::is_pointer<Up>::value, int> = 0>
     TIMEMORY_ALWAYS_INLINE void sfinae(Up&, Up&, long, long, Args&&...)
     {}
 
@@ -217,10 +222,11 @@ struct generic_operator
     //
     //----------------------------------------------------------------------------------//
 
-    // if the type is not available, never do anything
+public:
+    /// if the type is not available, never do anything
     template <typename Up, typename... Args, typename Rp = Tp,
-              enable_if_t<!(trait::is_available<Rp>::value), int> = 0>
-    TIMEMORY_ALWAYS_INLINE generic_operator(Up&, Args&&...)
+              enable_if_t<!trait::is_available<Rp>::value, int> = 0>
+    generic_operator(Up&, Args&&...)
     {}
 };
 //
@@ -291,14 +297,14 @@ struct generic_counter
 
     TIMEMORY_DELETED_OBJECT(generic_counter)
 
-    template <typename Up, enable_if_t<(std::is_pointer<Up>::value), int> = 0>
+    template <typename Up, enable_if_t<std::is_pointer<Up>::value, int> = 0>
     explicit generic_counter(const Up& obj, uint64_t& count)
     {
         // static_assert(std::is_same<Up, type>::value, "Error! Up != type");
         count += (trait::runtime_enabled<type>::get() && obj) ? 1 : 0;
     }
 
-    template <typename Up, enable_if_t<!(std::is_pointer<Up>::value), int> = 0>
+    template <typename Up, enable_if_t<!std::is_pointer<Up>::value, int> = 0>
     explicit generic_counter(const Up&, uint64_t& count)
     {
         // static_assert(std::is_same<Up, type>::value, "Error! Up != type");

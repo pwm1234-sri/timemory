@@ -29,12 +29,6 @@
  *
  */
 
-//======================================================================================//
-/// This global method should be used on LINUX or MacOSX platforms with gcc,
-/// clang, or intel compilers for activating signal detection and forcing
-/// exception being thrown that can be handled when detected.
-//======================================================================================//
-
 #pragma once
 
 #include "timemory/backends/dmp.hpp"

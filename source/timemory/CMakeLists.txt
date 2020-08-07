@@ -32,11 +32,9 @@ add_subdirectory(storage)
 add_subdirectory(operations)
 add_subdirectory(backends)
 add_subdirectory(variadic)
-
 add_subdirectory(components)
-
-add_subdirectory(containers)
 add_subdirectory(runtime)
+add_subdirectory(containers)
 add_subdirectory(ert)
 
 # add_subdirectory(compat)

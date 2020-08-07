@@ -228,7 +228,11 @@ inline bool&
 is_finalized()
 {
 #if defined(TIMEMORY_USE_MPI)
-    static bool _instance = false;
+    int32_t _fini = 0;
+    MPI_Finalized(&_fini);
+    static bool _instance = static_cast<bool>(_fini);
+    if(!_instance)
+        _instance = static_cast<bool>(_fini);
 #else
     static bool _instance = true;
 #endif
@@ -311,16 +315,12 @@ initialize(int* argc, char*** argv)
 inline void
 finalize()
 {
-    // is_initialized has a check against is_finalized(), if manually invoking
-    // MPI_Finalize() [not recommended bc timemory will do it when MPI support is enabled]
-    // then set that value to true, e.g.
-    //          tim::mpi::is_finalized() = true;
 #if defined(TIMEMORY_USE_MPI)
     if(is_initialized())
     {
         // barrier();
         MPI_Finalize();
-        is_finalized() = true;  // to try to avoid calling MPI_Initialized(...) after
+        is_finalized() = true;
         // finalized
     }
 #endif

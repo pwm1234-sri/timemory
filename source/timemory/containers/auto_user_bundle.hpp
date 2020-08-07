@@ -25,8 +25,7 @@
 
 /**
  * \headerfile "timemory/containers/auto_user_bundle.hpp"
- * \brief Pre-configured bundles. When linking against library, these will get declared
- * as extern templates and will drastically reduce compile time.
+ *
  */
 
 #pragma once

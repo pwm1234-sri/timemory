@@ -24,8 +24,6 @@
 
 /**
  * \headerfile "timemory/components/base/definition.hpp"
- * \brief Defines the non-template functions for the static polymorphic base for the
- * components
  *
  */
 
@@ -186,7 +184,7 @@ base<Tp, Value>::dummy()
 //--------------------------------------------------------------------------------------//
 //
 template <typename Tp, typename Value>
-typename base<Tp, Value>::base_storage_type*
+tim::base::storage*
 base<Tp, Value>::get_storage()
 {
     return tim::base::storage::template base_instance<Tp, Value>();

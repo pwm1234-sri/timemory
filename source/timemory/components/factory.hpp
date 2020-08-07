@@ -25,7 +25,7 @@
 #pragma once
 
 // clang-format off
-#include "timemory/components/opaque.hpp"
+#include "timemory/components/opaque/types.hpp"
 #include "timemory/components/opaque/definition.hpp"
 #include "timemory/components/extern.hpp"
 #include "timemory/components.hpp"
