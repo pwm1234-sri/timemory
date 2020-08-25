@@ -92,16 +92,6 @@ TIMEMORY_STATISTICS_TYPE(component::current_peak_rss, resource_usage::alias::pai
 
 //--------------------------------------------------------------------------------------//
 //
-//                              RECORD MAX
-//
-//--------------------------------------------------------------------------------------//
-
-TIMEMORY_DEFINE_CONCRETE_TRAIT(record_max, component::peak_rss, true_type)
-TIMEMORY_DEFINE_CONCRETE_TRAIT(record_max, component::page_rss, true_type)
-TIMEMORY_DEFINE_CONCRETE_TRAIT(record_max, component::virtual_memory, true_type)
-
-//--------------------------------------------------------------------------------------//
-//
 //                              REPORT SUM
 //
 //--------------------------------------------------------------------------------------//

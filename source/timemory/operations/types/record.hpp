@@ -96,15 +96,8 @@ private:
         SFINAE_WARNING(type);
     }
 
-    //  satisfies mpl condition and accepts arguments
-    template <typename T, enable_if_t<trait::record_max<T>::value, int> = 0>
-    auto sfinae(T& obj, const T& rhs, int, int) -> decltype(std::max(obj, rhs), void())
-    {
-        obj = std::max(obj, rhs);
-    }
-
     //  satisfies mpl condition but does not accept arguments
-    template <typename T, enable_if_t<!trait::record_max<T>::value, int> = 0>
+    template <typename T>
     auto sfinae(T& obj, const T& rhs, int, long) -> decltype((obj += rhs), void())
     {
         obj += rhs;

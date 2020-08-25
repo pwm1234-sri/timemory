@@ -58,20 +58,7 @@ struct plus
 
     TIMEMORY_DELETED_OBJECT(plus)
 
-    template <typename Up = Tp, enable_if_t<trait::record_max<Up>::value, int> = 0,
-              enable_if_t<has_data<Up>::value, char> = 0>
-    plus(type& obj, const type& rhs)
-    {
-        if(!trait::runtime_enabled<type>::get())
-            return;
-
-        obj = std::max(obj, rhs);
-        // ensures update to laps
-        sfinae(obj, 0, 0, rhs);
-    }
-
-    template <typename Up = Tp, enable_if_t<!trait::record_max<Up>::value, int> = 0,
-              enable_if_t<has_data<Up>::value, char> = 0>
+    template <typename Up = Tp, enable_if_t<has_data<Up>::value, char> = 0>
     plus(type& obj, const type& rhs)
     {
         if(!trait::runtime_enabled<type>::get())

@@ -30,7 +30,6 @@
 #pragma once
 
 #include "timemory/components/base.hpp"
-#include "timemory/data/statistics.hpp"
 #include "timemory/mpl/apply.hpp"
 #include "timemory/mpl/types.hpp"
 #include "timemory/units.hpp"
