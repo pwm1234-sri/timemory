@@ -207,14 +207,8 @@ using identity_t = typename identity<T>::type;
 struct null_type
 {
     template <typename... Args>
-    null_type(Args&&...)
+    explicit null_type(Args&&...)
     {}
-
-    template <typename Tp>
-    operator Tp()
-    {
-        return Tp{};
-    }
 
     TIMEMORY_DEFAULT_OBJECT(null_type)
 
