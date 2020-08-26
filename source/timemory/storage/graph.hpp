@@ -130,7 +130,7 @@ public:
     // constructors and destructors
     graph_allocator()                           = default;
     graph_allocator(const graph_allocator&)     = delete;
-    graph_allocator(graph_allocator&&) noexcept = default;
+    graph_allocator(graph_allocator&&)          = default;
     ~graph_allocator()
     {
         for(auto& itr : m_allocations)
@@ -345,10 +345,10 @@ public:
     graph(const T&);  // constructor setting given element as head
     graph(const iterator_base&);
     graph(const graph<T, AllocatorT>&);      // copy constructor
-    graph(graph<T, AllocatorT>&&) noexcept;  // move constructor
+    graph(graph<T, AllocatorT>&&);           // move constructor
     ~graph();
     graph<T, AllocatorT>& operator=(const graph<T, AllocatorT>&);      // copy assignment
-    graph<T, AllocatorT>& operator=(graph<T, AllocatorT>&&) noexcept;  // move assignment
+    graph<T, AllocatorT>& operator=(graph<T, AllocatorT>&&);           // move assignment
 
     /// Base class for iterators, only pointers stored, no traversal logic.
     class iterator_base
@@ -365,12 +365,12 @@ public:
         iterator_base(graph_node*);
 
         iterator_base(const iterator_base&)     = default;
-        iterator_base(iterator_base&&) noexcept = default;
+        iterator_base(iterator_base&&)          = default;
 
     public:
         // public operators
         iterator_base& operator=(const iterator_base&) = default;
-        iterator_base& operator=(iterator_base&&) noexcept = default;
+        iterator_base& operator=(iterator_base&&) = default;
 
         operator bool() const { return node != nullptr; }
 
@@ -408,12 +408,12 @@ public:
         pre_order_iterator(const sibling_iterator&);
 
         pre_order_iterator(const pre_order_iterator&)     = default;
-        pre_order_iterator(pre_order_iterator&&) noexcept = default;
+        pre_order_iterator(pre_order_iterator&&)          = default;
 
     public:
         // public operators
         pre_order_iterator& operator=(const pre_order_iterator&) = default;
-        pre_order_iterator& operator=(pre_order_iterator&&) noexcept = default;
+        pre_order_iterator& operator=(pre_order_iterator&&) = default;
 
         bool                operator==(const pre_order_iterator&) const;
         bool                operator!=(const pre_order_iterator&) const;
@@ -445,12 +445,12 @@ public:
         sibling_iterator(const iterator_base&);
 
         sibling_iterator(const sibling_iterator&)     = default;
-        sibling_iterator(sibling_iterator&&) noexcept = default;
+        sibling_iterator(sibling_iterator&&)          = default;
 
     public:
         // public operators
         sibling_iterator& operator=(const sibling_iterator&) = default;
-        sibling_iterator& operator=(sibling_iterator&&) noexcept = default;
+        sibling_iterator& operator=(sibling_iterator&&) = default;
 
         bool              operator==(const sibling_iterator&) const;
         bool              operator!=(const sibling_iterator&) const;
@@ -830,7 +830,7 @@ graph<T, AllocatorT>::graph(const T& x)
 //--------------------------------------------------------------------------------------//
 
 template <typename T, typename AllocatorT>
-graph<T, AllocatorT>::graph(graph<T, AllocatorT>&& x) noexcept
+graph<T, AllocatorT>::graph(graph<T, AllocatorT>&& x)
 {
     m_head_initialize();
     if(x.head->next_sibling != x.feet)
@@ -905,7 +905,7 @@ graph<T, AllocatorT>::operator=(const graph<T, AllocatorT>& other)
 
 template <typename T, typename AllocatorT>
 graph<T, AllocatorT>&
-graph<T, AllocatorT>::operator=(graph<T, AllocatorT>&& x) noexcept
+graph<T, AllocatorT>::operator=(graph<T, AllocatorT>&& x)
 {
     if(this != &x)
     {
