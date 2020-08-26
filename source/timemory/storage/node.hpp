@@ -87,9 +87,15 @@ struct graph : public data<Tp>::node_type
 
     graph();
     explicit graph(base_type&& _base) noexcept;
+
+    ~graph() = default;
+    graph(const graph&)     = default;
+    graph(graph&&) noexcept = default;
+    graph& operator=(const graph&) = default;
+    graph& operator=(graph&&) noexcept = default;
+
     graph(uint64_t _id, const Tp& _obj, int64_t _depth, uint16_t _tid,
           uint16_t _pid = process::get_id());
-    ~graph() = default;
 
     bool      operator==(const graph& rhs) const;
     bool      operator!=(const graph& rhs) const;
