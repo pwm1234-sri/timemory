@@ -112,7 +112,7 @@ public:
         static initializer_type _instance = [](this_type& cl) {
             static auto env_enum = []() {
                 auto _tag = demangle<Tag>();
-                for(auto itr : { string_t("tim::"), string_t("api::") })
+                for(const auto& itr : { string_t("tim::"), string_t("api::") })
                 {
                     auto _pos = _tag.find(itr);
                     do
@@ -123,8 +123,8 @@ public:
                     } while(_pos != std::string::npos);
                 }
 
-                for(auto itr : { string_t("::"), string_t("<"), string_t(">"),
-                                 string_t(" "), string_t("__") })
+                for(const auto& itr : { string_t("::"), string_t("<"), string_t(">"),
+                                        string_t(" "), string_t("__") })
                 {
                     auto _pos = _tag.find(itr);
                     do

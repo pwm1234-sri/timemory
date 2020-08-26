@@ -220,6 +220,7 @@ struct craypat_counters : base<craypat_counters, std::vector<unsigned long>>
 
     void stop()
     {
+        using namespace tim::component::operators;
         value = (record() - value);
         accum += value;
     }

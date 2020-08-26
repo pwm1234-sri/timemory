@@ -308,7 +308,7 @@ public:
                 }
                 sum += itr;
                 if(itr > 0)
-                    get_typeids().emplace_back(std::move(itr));
+                    get_typeids().emplace_back(itr);
             }
             if(sum == 0)
             {
@@ -420,7 +420,7 @@ public:
                 if(itr > 0 && contains(itr, m_typeids))
                     return;
                 sum += itr;
-                m_typeids.emplace_back(std::move(itr));
+                m_typeids.emplace_back(itr);
             }
             if(sum == 0)
                 return;

@@ -51,14 +51,12 @@ namespace plotting
 //
 #if !(defined(TIMEMORY_USE_EXTERN) || defined(TIMEMORY_USE_PLOTTING_EXTERN)) ||          \
     defined(TIMEMORY_PLOTTING_SOURCE)
-
 //
 //--------------------------------------------------------------------------------------//
 //
-// NOLINTNEXTLINE
 TIMEMORY_PLOTTING_LINKAGE(void)
-plot(string_t _label, string_t _prefix, const string_t& _dir, bool _echo_dart,
-     string_t _json_file)
+plot(const string_t& _label, const string_t& _prefix, const string_t& _dir,
+     bool _echo_dart, const string_t& _json_file)
 {
     auto_lock_t lk(type_mutex<std::ostream>());
 
@@ -77,7 +75,7 @@ plot(string_t _label, string_t _prefix, const string_t& _dir, bool _echo_dart,
 
     auto _info = TIMEMORY_LABEL("");
 
-    auto& _file = _json_file;
+    const auto& _file = _json_file;
     {
         std::ifstream ifs(_file.c_str());
         bool          exists = ifs.good();

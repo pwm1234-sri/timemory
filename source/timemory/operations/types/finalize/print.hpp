@@ -60,7 +60,7 @@ namespace finalize
 //--------------------------------------------------------------------------------------//
 //
 TIMEMORY_OPERATIONS_LINKAGE(void)
-base::print::print_plot(const std::string& outfname, const std::string suffix)
+base::print::print_plot(const std::string& outfname, const std::string suffix)  // NOLINT
 {
     if(node_rank == 0)
     {
@@ -76,7 +76,7 @@ base::print::print_plot(const std::string& outfname, const std::string suffix)
 //--------------------------------------------------------------------------------------//
 //
 TIMEMORY_OPERATIONS_LINKAGE(void)
-base::print::write(std::ostream& os, stream_type stream)
+base::print::write(std::ostream& os, stream_type stream)  // NOLINT
 {
     if(stream)
         os << *stream << std::flush;
@@ -85,17 +85,17 @@ base::print::write(std::ostream& os, stream_type stream)
 //--------------------------------------------------------------------------------------//
 //
 TIMEMORY_OPERATIONS_LINKAGE(void)
-base::print::print_cout(stream_type stream)
+base::print::print_cout(stream_type stream)  // NOLINT
 {
     printf("\n");
-    write(std::cout, stream);
+    write(std::cout, stream);  // NOLINT
     printf("\n");
 }
 //
 //--------------------------------------------------------------------------------------//
 //
 TIMEMORY_OPERATIONS_LINKAGE(void)
-base::print::print_text(const std::string& outfname, stream_type stream)
+base::print::print_text(const std::string& outfname, stream_type stream)  // NOLINT
 {
     if(outfname.length() > 0 && stream)
     {
