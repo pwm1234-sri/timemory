@@ -92,7 +92,7 @@ amypx(int64_t n, Tp* x, Tp* y, int64_t nitr)
 //--------------------------------------------------------------------------------------//
 // amypx calculation
 //
-#if defined(TIMEMORY_USE_CUDA_HALF
+#if defined(TIMEMORY_USE_CUDA_HALF)
 template <>
 GLOBAL_CALLABLE void
 amypx(int64_t n, fp16_t* x, fp16_t* y, int64_t nitr)
@@ -156,7 +156,7 @@ exec_amypx(int64_t data_size, int64_t nitr, params_t params,
 }
 
 //--------------------------------------------------------------------------------------//
-#if defined(TIMEMORY_USE_CUDA_HALF
+#if defined(TIMEMORY_USE_CUDA_HALF)
 template <>
 void
 exec_amypx<fp16_t>(int64_t data_size, int64_t nitr, params_t params,
@@ -261,7 +261,7 @@ main(int argc, char** argv)
     for(auto& itr : streams)
         tim::cuda::stream_create(itr);
 
-#if defined(TIMEMORY_USE_CUDA_HALF
+#if defined(TIMEMORY_USE_CUDA_HALF)
     customize_roofline<fp16_t>(num_threads, working_size, memory_factor, num_streams,
                                grid_size, block_size);
 #endif
@@ -289,10 +289,10 @@ main(int argc, char** argv)
     // run amypx calculations
     //
 
-#if defined(TIMEMORY_USE_CUDA_HALF
+#if defined(TIMEMORY_USE_CUDA_HALF)
     {
         printf("Executing fp16 routines...\n");
-        simple_timer_t routine("fp16", false, true);
+        simple_timer_t routine("fp16", tim::scope::tree{}, true);
         exec_amypx<fp16_t>(data_size / 2, iterations * 2, params, streams);
         exec_amypx<fp16_t>(data_size * 1, iterations / 1, params, streams);
         exec_amypx<fp16_t>(data_size * 2, iterations / 2, params, streams);
@@ -301,7 +301,7 @@ main(int argc, char** argv)
 
     {
         printf("Executing fp32 routines...\n");
-        simple_timer_t routine("fp32", false, true);
+        simple_timer_t routine("fp32", tim::scope::tree{}, true);
         exec_amypx<float>(data_size / 2, iterations * 2, params, streams);
         exec_amypx<float>(data_size * 1, iterations / 1, params, streams);
         exec_amypx<float>(data_size * 2, iterations / 2, params, streams);
@@ -309,7 +309,7 @@ main(int argc, char** argv)
 
     {
         printf("Executing fp64 routines...\n");
-        simple_timer_t routine("fp64", false, true);
+        simple_timer_t routine("fp64", tim::scope::tree{}, true);
         exec_amypx<double>(data_size / 2, iterations * 2, params, streams);
         exec_amypx<double>(data_size * 1, iterations / 1, params, streams);
         exec_amypx<double>(data_size * 2, iterations / 2, params, streams);

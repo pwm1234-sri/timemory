@@ -30,7 +30,7 @@
 #include "timemory/enum.h"
 #include "timemory/runtime/macros.hpp"
 //
-#include "timemory/components/factory.hpp"
+#include "timemory/components/extern.hpp"
 #include "timemory/variadic/definition.hpp"
 //
 

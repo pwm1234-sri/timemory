@@ -42,8 +42,9 @@
 #include <stdexcept>
 #include <vector>
 
+#include "timemory/macros/compiler.hpp"
+#include "timemory/macros/os.hpp"
 #include "timemory/units.hpp"
-#include "timemory/utility/macros.hpp"
 #include "timemory/utility/serializer.hpp"
 
 //--------------------------------------------------------------------------------------//
@@ -64,7 +65,7 @@ public:
     explicit tgraph_node(const T&);
     explicit tgraph_node(T&&) noexcept;
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WINDOWS) || defined(_TIMEMORY_NVCC) 
     tgraph_node(const tgraph_node&) = default;
     tgraph_node& operator=(const tgraph_node&) = default;
 #else
@@ -72,8 +73,11 @@ public:
     tgraph_node& operator=(const tgraph_node&) = delete;
 #endif
 
-    tgraph_node(tgraph_node&&) noexcept = default;
-    tgraph_node& operator=(tgraph_node&&) noexcept = default;
+    tgraph_node(tgraph_node&&) = default;
+    tgraph_node& operator=(tgraph_node&&) = default;
+    
+    // tgraph_node(tgraph_node&&) noexcept = default;
+    // tgraph_node& operator=(tgraph_node&&) noexcept = default;
 
     tgraph_node<T>* parent       = nullptr;
     tgraph_node<T>* first_child  = nullptr;
@@ -874,8 +878,8 @@ graph<T, AllocatorT>::m_head_initialize()
 {
     head = m_alloc.allocate(1, nullptr);  // MSVC does not have default second argument
     feet = m_alloc.allocate(1, nullptr);
-    m_alloc.construct(head, std::move(tgraph_node<T>()));
-    m_alloc.construct(feet, std::move(tgraph_node<T>()));
+    m_alloc.construct(head, std::move(tgraph_node<T>{}));
+    m_alloc.construct(feet, std::move(tgraph_node<T>{}));
 
     head->parent       = nullptr;
     head->first_child  = nullptr;

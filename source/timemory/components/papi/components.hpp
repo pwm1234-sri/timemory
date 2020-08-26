@@ -677,6 +677,8 @@ struct papi_array
     using array_t = std::array<Tp, MaxNumEvents>;
 
     friend struct operation::record<this_type>;
+    friend struct operation::start<this_type>;
+    friend struct operation::stop<this_type>;
 
     //----------------------------------------------------------------------------------//
 
@@ -996,6 +998,8 @@ struct papi_tuple
     using array_t = std::array<Tp, num_events>;
 
     friend struct operation::record<common_type>;
+    friend struct operation::start<this_type>;
+    friend struct operation::stop<this_type>;
 
 public:
     //----------------------------------------------------------------------------------//

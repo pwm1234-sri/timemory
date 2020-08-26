@@ -60,9 +60,8 @@ plot(const std::string& _label, const std::string& _prefix, const std::string& _
 //
 //--------------------------------------------------------------------------------------//
 //
-template <typename... Types,
-          typename std::enable_if<(sizeof...(Types) > 0), int>::type = 0>
-void
+template <typename... Types>
+std::enable_if_t<(sizeof...(Types) > 0), void>
 plot(std::string _prefix = "", const std::string& _dir = settings::output_path(),
      bool _echo_dart = settings::dart_output(), std::string _json_file = "");
 //
@@ -153,8 +152,8 @@ struct plot<type_list<Types...>> : plot<Types...>
 //
 //--------------------------------------------------------------------------------------//
 //
-template <typename... Types, typename std::enable_if<(sizeof...(Types) > 0), int>::type>
-void
+template <typename... Types>
+std::enable_if_t<(sizeof...(Types) > 0), void>
 plot(const string_t& _prefix, const string_t& _dir, bool _echo_dart,
      const string_t& _json_file)
 {

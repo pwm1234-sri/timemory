@@ -38,6 +38,10 @@ target_compile_options(test-opt-flags INTERFACE ${_FLAGS})
 if(NOT TIMEMORY_USE_ARCH)
   add_target_flag_if_avail(test-opt-flags "-march=native")
 endif()
+add_library(test-debug-flags INTERFACE)
+string(REPLACE " " ";" _FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
+target_compile_options(test-debug-flags INTERFACE ${_FLAGS})
+add_target_flag_if_avail(test-debug-flags "-O0")
 
 add_library(test-werror-flags INTERFACE)
 add_target_flag_if_avail(test-werror-flags "-W" "-Wall" "-Wextra" "-pedantic"

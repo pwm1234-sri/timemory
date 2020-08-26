@@ -40,6 +40,7 @@
 #include "timemory/components/user_bundle/types.hpp"
 
 #include "timemory/runtime/types.hpp"
+#include "timemory/runtime/configure.hpp"
 
 #include <functional>
 #include <regex>

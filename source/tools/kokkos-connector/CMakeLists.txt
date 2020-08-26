@@ -219,7 +219,10 @@ if(TIMEMORY_USE_PAPI)
         TARGETS timemory::timemory-papi)
     add_connector_config(cpu_roofline
         COMPONENTS cpu_roofline_flops
-        TARGETS timemory::timemory-cpu-roofline)
+        TARGETS
+        timemory::timemory-ert
+        timemory::timemory-cpu-roofline
+        timemory::timemory-roofline-component)
     add_connector_config(cpu_flops
         COMPONENTS papi_tuple<PAPI_DP_OPS,PAPI_SP_OPS>
         TARGETS timemory::timemory-papi)
@@ -263,23 +266,41 @@ endif()
 if(TIMEMORY_USE_CUDA)
     add_connector_config(cuda_profiler
         COMPONENTS cuda_profiler
-        TARGETS timemory::timemory-cuda)
+        TARGETS
+        timemory::timemory-cuda
+        timemory::timemory-cuda-component)
     add_connector_config(cuda_event
         COMPONENTS cuda_event
-        TARGETS timemory::timemory-cuda)
+        TARGETS
+        timemory::timemory-cuda
+        timemory::timemory-cuda-component)
     add_connector_config(cuda_nvtx
         COMPONENTS nvtx_marker
-        TARGETS timemory::timemory-cupti timemory::timemory-cuda timemory::timemory-nvtx)
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-nvtx
+        timemory::timemory-cuda-component
+        timemory::timemory-cupti-component)
     add_connector_config(cuda_activity
         COMPONENTS cupti_activity
-        TARGETS timemory::timemory-cupti timemory::timemory-cuda)
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
     add_connector_config(cuda_hw_counters
         COMPONENTS cupti_counters
-        TARGETS timemory::timemory-cupti timemory::timemory-cuda)
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
     add_connector_config(gpu_roofline
         GPU
         COMPONENTS gpu_roofline_flops
-        TARGETS timemory::timemory-gpu-roofline)
+        TARGETS
+        timemory::timemory-gpu-roofline
+        timemory::timemory-ert
+        timemory::timemory-roofline-component)
 endif()
 
 if(TIMEMORY_USE_VTUNE)

@@ -392,6 +392,15 @@
 #    define TIMEMORY_DECLARE_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)                 \
         namespace tim                                                                    \
         {                                                                                \
+        namespace component                                                              \
+        {                                                                                \
+        namespace factory                                                                \
+        {                                                                                \
+        extern template opaque           get_opaque<COMPONENT_NAME>();                   \
+        extern template opaque           get_opaque<COMPONENT_NAME>(scope::config);      \
+        extern template std::set<size_t> get_typeids<COMPONENT_NAME>();                  \
+        }                                                                                \
+        }                                                                                \
         namespace operation                                                              \
         {                                                                                \
         extern template struct init_storage<COMPONENT_NAME>;                             \
@@ -423,6 +432,15 @@
 #    define TIMEMORY_INSTANTIATE_EXTERN_OPERATIONS(COMPONENT_NAME, HAS_DATA)             \
         namespace tim                                                                    \
         {                                                                                \
+        namespace component                                                              \
+        {                                                                                \
+        namespace factory                                                                \
+        {                                                                                \
+        template opaque           get_opaque<COMPONENT_NAME>();                          \
+        template opaque           get_opaque<COMPONENT_NAME>(scope::config);             \
+        template std::set<size_t> get_typeids<COMPONENT_NAME>();                         \
+        }                                                                                \
+        }                                                                                \
         namespace operation                                                              \
         {                                                                                \
         template struct init_storage<COMPONENT_NAME>;                                    \
