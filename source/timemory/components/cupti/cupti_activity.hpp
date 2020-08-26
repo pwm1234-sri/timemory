@@ -180,6 +180,11 @@ public:
     // make sure it is removed
     ~cupti_activity() { cupti::activity::get_receiver().remove(this); }
 
+    cupti_activity(const cupti_activity&)     = default;
+    cupti_activity(cupti_activity&&) noexcept = default;
+    cupti_activity& operator=(const cupti_activity&) = default;
+    cupti_activity& operator=(cupti_activity&&) noexcept = default;
+
     //----------------------------------------------------------------------------------//
     // start
     //

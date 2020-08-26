@@ -156,6 +156,8 @@ public:
 
     static void global_finalize(storage_type*) { finalize(); }
 
+    TIMEMORY_DEFAULT_OBJECT(cupti_profiler)
+
     value_type record()
     {
         auto&      chipName         = get_persistent_data().chipName;

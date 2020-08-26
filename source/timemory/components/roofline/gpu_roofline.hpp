@@ -961,6 +961,8 @@ struct gpu_roofline<cuda::fp16_t>
     }
 
 public:
+    TIMEMORY_DEFAULT_OBJECT(gpu_roofline)
+
     //----------------------------------------------------------------------------------//
 
     static MODE& event_mode()
