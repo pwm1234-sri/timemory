@@ -425,6 +425,18 @@ struct config : public data_type
                          std::make_index_sequence<scope_count>{}))
     {}
 
+    config(tree)
+    : config(false, false, false)
+    {}
+
+    config(flat)
+    : config(true, false, false)
+    {}
+
+    config(timeline)
+    : config(false, true, false)
+    {}
+
     template <typename Arg, typename... Args,
               std::enable_if_t<(std::is_same<Arg, tree>::value ||
                                 std::is_same<Arg, flat>::value ||

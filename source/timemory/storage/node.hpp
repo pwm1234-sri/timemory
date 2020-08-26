@@ -88,7 +88,7 @@ struct graph : public data<Tp>::node_type
     graph();
     explicit graph(base_type&& _base) noexcept;
 
-    ~graph() = default;
+    ~graph()                = default;
     graph(const graph&)     = default;
     graph(graph&&) noexcept = default;
     graph& operator=(const graph&) = default;

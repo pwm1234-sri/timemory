@@ -72,8 +72,8 @@ public:
     tgraph_node& operator=(const tgraph_node&) = delete;
 #endif
 
-    tgraph_node(tgraph_node&&) noexcept = default;
-    tgraph_node& operator=(tgraph_node&&) noexcept = default;
+    tgraph_node(tgraph_node&&) = default;
+    tgraph_node& operator=(tgraph_node&&) = default;
 
     tgraph_node<T>* parent       = nullptr;
     tgraph_node<T>* first_child  = nullptr;
