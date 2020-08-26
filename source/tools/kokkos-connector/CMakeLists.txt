@@ -226,6 +226,38 @@ if(TIMEMORY_USE_PAPI)
     add_connector_config(cpu_instructions
         COMPONENTS papi_tuple<PAPI_TOT_INS,PAPI_LD_INS,PAPI_SR_INS>
         TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_cache_misses
+        COMPONENTS papi_tuple<PAPI_L1_TCM,PAPI_L2_TCM,PAPI_L3_TCM>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_tlb
+        COMPONENTS papi_tuple<PAPI_TLB_DM,PAPI_TLB_IM,PAPI_TLB_TL,PAPI_TLB_SD>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_branching
+        COMPONENTS
+        papi_tuple<PAPI_BR_UCN,PAPI_BR_CN,PAPI_BR_TKN,PAPI_BR_NTK,PAPI_BR_MSP,PAPI_BR_PRC,PAPI_BR_INS>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_stalls
+        COMPONENTS
+        papi_tuple<PAPI_MEM_SCY,PAPI_MEM_RCY,PAPI_MEM_WCY,PAPI_RES_STL,PAPI_FP_STAL>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l1_misses
+        COMPONENTS papi_tuple<PAPI_L1_DCM,PAPI_L1_ICM,PAPI_L1_TCM,PAPI_L1_LDM,PAPI_L1_STM>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l2_misses
+        COMPONENTS papi_tuple<PAPI_L1_DCM,PAPI_L1_ICM,PAPI_L1_TCM,PAPI_L1_LDM,PAPI_L1_STM>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l3_misses
+        COMPONENTS papi_tuple<PAPI_L3_DCM,PAPI_L3_ICM,PAPI_L3_TCM,PAPI_L3_LDM,PAPI_L3_STM>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l1_total
+        COMPONENTS papi_tuple<PAPI_L1_TCM,PAPI_L1_TCH,PAPI_L1_TCA,PAPI_L1_TCR,PAPI_L1_TCW>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l2_total
+        COMPONENTS papi_tuple<PAPI_L2_TCM,PAPI_L2_TCH,PAPI_L2_TCA,PAPI_L2_TCR,PAPI_L2_TCW>
+        TARGETS timemory::timemory-papi)
+    add_connector_config(cpu_l3_total
+        COMPONENTS papi_tuple<PAPI_L3_TCM,PAPI_L3_TCH,PAPI_L3_TCA,PAPI_L3_TCR,PAPI_L3_TCW>
+        TARGETS timemory::timemory-papi)
 endif()
 
 if(TIMEMORY_USE_CUDA)

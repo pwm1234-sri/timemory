@@ -338,7 +338,7 @@ if(${PROJECT_NAME}_MASTER_PROJECT)
 endif()
 
 if(TIMEMORY_USE_CUDA OR TIMEMORY_BUILD_DOCS)
-    add_option(TIMEMORY_DISABLE_CUDA_HALF "Disable half/half2 if CUDA_ARCH < 60" ON)
+    add_option(TIMEMORY_USE_CUDA_HALF "Enable half/half2 if CUDA_ARCH < 60" OFF)
 endif()
 
 set(_DYNINST OFF)

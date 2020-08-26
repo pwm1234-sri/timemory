@@ -34,6 +34,7 @@
 #include "timemory/components/roofline/types.hpp"
 
 #include "timemory/ert/configuration.hpp"
+#include "timemory/ert/extern.hpp"
 
 #include <array>
 #include <memory>

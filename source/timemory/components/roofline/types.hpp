@@ -48,7 +48,7 @@ TIMEMORY_COMPONENT_ALIAS(gpu_roofline_hp_flops, gpu_roofline<cuda::fp16_t>)
 TIMEMORY_COMPONENT_ALIAS(gpu_roofline_sp_flops, gpu_roofline<float>)
 TIMEMORY_COMPONENT_ALIAS(gpu_roofline_dp_flops, gpu_roofline<double>)
 
-#if !defined(TIMEMORY_DISABLE_CUDA_HALF)
+#if defined(TIMEMORY_USE_CUDA_HALF)
 TIMEMORY_COMPONENT_ALIAS(gpu_roofline_flops, gpu_roofline<cuda::fp16_t, float, double>)
 #else
 TIMEMORY_COMPONENT_ALIAS(gpu_roofline_flops, gpu_roofline<float, double>)

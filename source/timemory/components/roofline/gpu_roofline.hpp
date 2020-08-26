@@ -33,6 +33,7 @@
 #include "timemory/components/roofline/types.hpp"
 
 #include "timemory/ert/configuration.hpp"
+#include "timemory/ert/extern.hpp"
 
 #include <array>
 #include <memory>
@@ -195,7 +196,7 @@ public:
                                  "dram_read_transactions",
                                  "dram_write_transactions" };
             */
-#if defined(TIMEMORY_CUDA_FP16)
+#if defined(TIMEMORY_USE_CUDA_HALF)
             if(is_one_of<cuda::fp16_t, types_tuple>::value)
             {
                 // for(string_t itr : { "flop_count_hp", "flop_count_hp_add",
@@ -439,8 +440,8 @@ public:
         return *this;
     }
 
-    gpu_roofline(gpu_roofline&&) = default;
-    gpu_roofline& operator=(gpu_roofline&&) = default;
+    gpu_roofline(gpu_roofline&&) noexcept = default;
+    gpu_roofline& operator=(gpu_roofline&&) noexcept = default;
 
     //----------------------------------------------------------------------------------//
 
@@ -883,7 +884,7 @@ public:
 
 //--------------------------------------------------------------------------------------//
 
-#if defined(TIMEMORY_DISABLE_CUDA_HALF)
+#if !defined(TIMEMORY_USE_CUDA_HALF)
 
 template <>
 struct gpu_roofline<cuda::fp16_t>

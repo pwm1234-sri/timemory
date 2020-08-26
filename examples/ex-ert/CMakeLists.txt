@@ -26,7 +26,7 @@ option(USE_CUDA "Enable CUDA" ${_USE_CUDA})
 option(USE_KOKKOS "Enable Kokkos" OFF)
 
 set(timemory_FIND_COMPONENTS_INTERFACE timemory-ert-example)
-set(COMPONENTS headers compile-options vector analysis-tools
+set(COMPONENTS headers compile-options vector analysis-tools ert
     OPTIONAL_COMPONENTS mpi cuda cuda-compiler)
 
 if(USE_CUDA)
