@@ -439,8 +439,8 @@ public:
         return *this;
     }
 
-    gpu_roofline(gpu_roofline&&) noexcept = default;
-    gpu_roofline& operator=(gpu_roofline&&) noexcept = default;
+    gpu_roofline(gpu_roofline&&) = default;
+    gpu_roofline& operator=(gpu_roofline&&) = default;
 
     //----------------------------------------------------------------------------------//
 
