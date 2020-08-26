@@ -117,11 +117,11 @@
 //
 #if !defined(TIMEMORY_DEFAULT_OBJECT)
 #    define TIMEMORY_DEFAULT_OBJECT(NAME)                                                \
-        NAME()            = default;                                                     \
-        NAME(const NAME&) = default;                                                     \
-        NAME(NAME&&)      = default;                                                     \
+        NAME()                = default;                                                 \
+        NAME(const NAME&)     = default;                                                 \
+        NAME(NAME&&) noexcept = default;                                                 \
         NAME& operator=(const NAME&) = default;                                          \
-        NAME& operator=(NAME&&) = default;
+        NAME& operator=(NAME&&) noexcept = default;
 #endif
 
 //======================================================================================//
@@ -406,11 +406,11 @@ struct config : public data_type
     : data_type(obj)
     {}
 
-    config(data_type&& obj)
+    config(data_type&& obj) noexcept
     : data_type(std::forward<data_type>(obj))
     {}
 
-    config(bool _flat)
+    explicit config(bool _flat)
     : data_type(generate(input_type{ { _flat, false, false } },
                          std::make_index_sequence<scope_count>{}))
     {}
@@ -430,17 +430,17 @@ struct config : public data_type
                                 std::is_same<Arg, flat>::value ||
                                 std::is_same<Arg, timeline>::value),
                                int> = 0>
-    config(Arg&& arg, Args&&... args)
+    explicit config(Arg&& arg, Args&&... args)
     {
         *this += std::forward<Arg>(arg);
         TIMEMORY_FOLD_EXPRESSION(*this += std::forward<Args>(args));
     }
 
-    ~config()             = default;
-    config(const config&) = default;
-    config(config&&)      = default;
+    ~config()                 = default;
+    config(const config&)     = default;
+    config(config&&) noexcept = default;
     config& operator=(const config&) = default;
-    config& operator=(config&&) = default;
+    config& operator=(config&&) noexcept = default;
 
     template <typename T, std::enable_if_t<(std::is_same<T, tree>::value ||
                                             std::is_same<T, flat>::value ||
@@ -498,12 +498,8 @@ struct config : public data_type
             // flat + tree is invalid and flat takes precedence
             return 1;
         }
-        else if(is_timeline())
-        {
-            // tree + timeline is essentially a flat profile at the given depth
-            // bc returning a nested depth for tree + timeline would look like recursion
-            return _current + 1;
-        }
+        // tree + timeline is essentially a flat profile at the given depth
+        // bc returning a nested depth for tree + timeline would look like recursion
         // if neither flat nor timeline are enabled, return the nested depth
         return _current + 1;
     }
@@ -556,7 +552,7 @@ private:
 //
 //--------------------------------------------------------------------------------------//
 //
-inline const config
+inline config
 operator+(config _lhs, tree)
 {
     _lhs.set(tree::value, true);
@@ -565,7 +561,7 @@ operator+(config _lhs, tree)
 //
 //--------------------------------------------------------------------------------------//
 //
-inline const config
+inline config
 operator+(config _lhs, flat)
 {
     _lhs.set(flat::value, true);
@@ -574,7 +570,7 @@ operator+(config _lhs, flat)
 //
 //--------------------------------------------------------------------------------------//
 //
-inline const config
+inline config
 operator+(config _lhs, timeline)
 {
     _lhs.set(timeline::value, true);
@@ -583,7 +579,7 @@ operator+(config _lhs, timeline)
 //
 //--------------------------------------------------------------------------------------//
 //
-inline const config
+inline config
 operator+(config _lhs, config _rhs)
 {
     return either(_lhs, _rhs, std::make_index_sequence<scope_count>{});
@@ -607,13 +603,13 @@ struct destructor
     destructor& operator=(const destructor&) = delete;
 
     // allow move operations
-    destructor(destructor&& rhs)
+    destructor(destructor&& rhs) noexcept
     : m_functor(std::move(rhs.m_functor))
     {
         rhs.m_functor = []() {};
     }
 
-    destructor& operator=(destructor&& rhs)
+    destructor& operator=(destructor&& rhs) noexcept
     {
         if(this != &rhs)
         {

@@ -131,12 +131,12 @@ public:
     //{}
 #endif
 
-    cuda_event()                  = default;
-    ~cuda_event()                 = default;
-    cuda_event(const cuda_event&) = default;
-    cuda_event(cuda_event&&)      = default;
+    cuda_event()                      = default;
+    ~cuda_event()                     = default;
+    cuda_event(const cuda_event&)     = default;
+    cuda_event(cuda_event&&) noexcept = default;
     cuda_event& operator=(const cuda_event&) = default;
-    cuda_event& operator=(cuda_event&&) = default;
+    cuda_event& operator=(cuda_event&&) noexcept = default;
 
     float get_display() const
     {

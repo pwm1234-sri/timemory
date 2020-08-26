@@ -150,7 +150,7 @@ settings::store_command_line(int argc, char** argv)
 TIMEMORY_SETTINGS_LINKAGE(std::string)
 settings::compose_output_filename(const std::string& _tag, std::string _ext,
                                   bool _mpi_init, const int32_t _mpi_rank, bool fake,
-                                  std::string _explicit)
+                                  std::string _explicit)  // NOLINT
 {
     auto _prefix = (_explicit.length() > 0) ? _explicit : get_output_prefix(fake);
 
@@ -189,7 +189,7 @@ settings::compose_output_filename(const std::string& _tag, std::string _ext,
 TIMEMORY_SETTINGS_LINKAGE(std::string)
 settings::compose_input_filename(const std::string& _tag, std::string _ext,
                                  bool _mpi_init, const int32_t _mpi_rank,
-                                 std::string _explicit)
+                                 std::string _explicit)  // NOLINT
 {
     if(settings::input_path().empty())
         settings::input_path() = settings::output_path();

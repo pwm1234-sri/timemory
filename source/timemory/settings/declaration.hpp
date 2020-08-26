@@ -82,11 +82,11 @@ struct TIMEMORY_SETTINGS_DLL settings
     settings()  = default;
     ~settings() = default;
 
-    settings(const settings&) = default;
-    settings(settings&&)      = default;
+    settings(const settings&)     = default;
+    settings(settings&&) noexcept = default;
 
     settings& operator=(const settings&) = default;
-    settings& operator=(settings&&) = default;
+    settings& operator=(settings&&) noexcept = default;
 
     //==================================================================================//
     //

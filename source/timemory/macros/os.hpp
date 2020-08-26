@@ -24,31 +24,53 @@
 
 #pragma once
 
-#include "timemory/macros/compiler.hpp"
-#include "timemory/macros/os.hpp"
-
 //======================================================================================//
 //
-//      This file no longer provides anything. CMake exports all symbols
+//      Operating System
 //
 //======================================================================================//
 
-#if !defined(tim_dll)
-#    define tim_dll
-#endif
-
-#if defined(_WINDOWS) && (defined(TIMEMORY_DLL_EXPORT) || defined(TIMEMORY_DLL_IMPORT))
-#    if !defined(tim_dll_export)
-#        define tim_dll_export
-#    endif
-#    if !defined(tim_dll_import)
-#        define tim_dll_import
+#if defined(__x86_64__)
+#    if !defined(_64BIT)
+#        define _64BIT
 #    endif
 #else
-#    if !defined(tim_dll_export)
-#        define tim_dll_export
+#    if !defined(_32BIT)
+#        define _32BIT
 #    endif
-#    if !defined(tim_dll_import)
-#        define tim_dll_import
+#endif
+
+//--------------------------------------------------------------------------------------//
+
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
+#    if !defined(_WINDOWS)
+#        define _WINDOWS
+#    endif
+
+//--------------------------------------------------------------------------------------//
+
+#elif defined(__APPLE__) || defined(__MACH__)
+#    if !defined(_MACOS)
+#        define _MACOS
+#    endif
+#    if !defined(_UNIX)
+#        define _UNIX
+#    endif
+
+//--------------------------------------------------------------------------------------//
+
+#elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
+#    if !defined(_LINUX)
+#        define _LINUX
+#    endif
+#    if !defined(_UNIX)
+#        define _UNIX
+#    endif
+
+//--------------------------------------------------------------------------------------//
+
+#elif defined(__unix__) || defined(__unix) || defined(unix)
+#    if !defined(_UNIX)
+#        define _UNIX
 #    endif
 #endif

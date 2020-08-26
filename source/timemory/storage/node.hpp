@@ -86,7 +86,7 @@ struct graph : public data<Tp>::node_type
     const uint16_t&   pid() const { return std::get<5>(*this); }
 
     graph();
-    explicit graph(base_type&& _base);
+    explicit graph(base_type&& _base) noexcept;
     graph(uint64_t _id, const Tp& _obj, int64_t _depth, uint16_t _tid,
           uint16_t _pid = process::get_id());
     ~graph() = default;
@@ -106,14 +106,14 @@ struct result : public data<Tp>::result_type
     using stats_type   = typename data<Tp>::stats_type;
     using this_type    = result<Tp>;
 
-    result()              = default;
-    ~result()             = default;
-    result(const result&) = default;
-    result(result&&)      = default;
+    result()                  = default;
+    ~result()                 = default;
+    result(const result&)     = default;
+    result(result&&) noexcept = default;
     result& operator=(const result&) = default;
-    result& operator=(result&&) = default;
+    result& operator=(result&&) noexcept = default;
 
-    result(base_type&& _base)
+    result(base_type&& _base) noexcept
     : base_type(std::forward<base_type>(_base))
     {}
 
@@ -177,7 +177,7 @@ graph<Tp>::graph()
 //--------------------------------------------------------------------------------------//
 //
 template <typename Tp>
-graph<Tp>::graph(base_type&& _base)
+graph<Tp>::graph(base_type&& _base) noexcept
 : base_type(std::forward<base_type>(_base))
 {}
 //

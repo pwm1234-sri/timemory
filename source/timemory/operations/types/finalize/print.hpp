@@ -134,7 +134,7 @@ print<Tp, true>::setup()
         itr = toupper(itr);
 
     // find the max width
-    for(const auto mitr : node_results)
+    for(const auto& mitr : node_results)
     {
         for(const auto& itr : mitr)
         {
@@ -176,7 +176,7 @@ print<Tp, true>::setup()
     if(settings::diff_output())
     {
         extensions.insert(extensions.begin(), fext);
-        for(auto itr : extensions)
+        for(const auto& itr : extensions)
         {
             auto inpfname = settings::compose_input_filename(label, itr);
             if(file_exists(inpfname))
@@ -439,7 +439,7 @@ print<Tp, true>::print_json(const std::string& outfname, result_type& results,
         std::ofstream ofs(outfname.c_str());
         if(ofs)
         {
-            auto fext = outfname.substr(outfname.find_last_of(".") + 1);
+            auto fext = outfname.substr(outfname.find_last_of('.') + 1);
             if(fext.empty())
                 fext = "unknown";
             manager::instance()->add_file_output(fext, label, outfname);

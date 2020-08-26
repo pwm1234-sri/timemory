@@ -69,12 +69,15 @@ were not available when timemory was installed.
 | `timemory::timemory-gpu-roofline` | Enables flags and libraries for proper GPU roofline generation |
 | `timemory::timemory-headers` | Provides minimal set of include flags to compile with timemory |
 | `timemory::timemory-hidden-visibility` | Adds -fvisibility=hidden compiler flag |
+| `timemory::timemory-instrument-functions` | Adds compiler flags to enable compile-time instrumentation |
 | `timemory::timemory-leak-sanitizer` | Adds compiler flags to enable leak sanitizer (-fsanitizer=leak) |
 | `timemory::timemory-likwid` | Enables LIKWID support |
 | `timemory::timemory-lto` | Adds link-time-optimization flags |
 | `timemory::timemory-memory-sanitizer` | Adds compiler flags to enable memory sanitizer (-fsanitizer=memory) |
 | `timemory::timemory-mpi` | Enables MPI support |
 | `timemory::timemory-mpip-library` | Provides MPIP library for MPI performance analysis |
+| `timemory::timemory-nccl` | Enables CUDA NCCL support |
+| `timemory::timemory-ncclp-library` | Provides NCCLP library for NCCL performance analysis |
 | `timemory::timemory-no-mpi-init` | Disables the generation of MPI_Init and MPI_Init_thread symbols |
 | `timemory::timemory-null-sanitizer` | Adds compiler flags to enable null sanitizer (-fsanitizer=null) |
 | `timemory::timemory-nvtx` | Enables CUDA NVTX support |

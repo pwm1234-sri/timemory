@@ -143,7 +143,7 @@ signal_settings::check_environment()
         match_t("USER2", sys_signal::User2),
     };
 
-    for(auto itr : _list)
+    for(const auto& itr : _list)
     {
         auto _enable  = get_env("SIGNAL_ENABLE_" + itr.first, false);
         auto _disable = get_env("SIGNAL_DISABLE_" + itr.first, false);
@@ -277,7 +277,7 @@ signal_settings::set_active(bool val)
 inline void
 signal_settings::set_exit_action(signal_function_t _f)
 {
-    f_signals().signals_exit_func = _f;
+    f_signals().signals_exit_func = std::move(_f);
 }
 
 //======================================================================================//

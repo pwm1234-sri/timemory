@@ -70,10 +70,10 @@ timemory_init(int argc, char** argv, const std::string& _prefix,
 
     std::string exe_name = argv[0];
 
-    while(exe_name.find("\\") != std::string::npos)
+    while(exe_name.find('\\') != std::string::npos)
         exe_name = exe_name.substr(exe_name.find_last_of('\\') + 1);
 
-    while(exe_name.find("/") != std::string::npos)
+    while(exe_name.find('/') != std::string::npos)
         exe_name = exe_name.substr(exe_name.find_last_of('/') + 1);
 
     static const std::vector<std::string> _exe_suffixes = { ".py", ".exe" };

@@ -24,31 +24,82 @@
 
 #pragma once
 
-#include "timemory/macros/compiler.hpp"
-#include "timemory/macros/os.hpp"
-
 //======================================================================================//
 //
-//      This file no longer provides anything. CMake exports all symbols
+//      LANGUAGE
 //
 //======================================================================================//
 
-#if !defined(tim_dll)
-#    define tim_dll
+// Define C++20
+#ifndef CXX17
+#    if __cplusplus > 201703L  // C++20
+#        define CXX20
+#    endif
 #endif
 
-#if defined(_WINDOWS) && (defined(TIMEMORY_DLL_EXPORT) || defined(TIMEMORY_DLL_IMPORT))
-#    if !defined(tim_dll_export)
-#        define tim_dll_export
+//--------------------------------------------------------------------------------------//
+
+// Define C++17
+#ifndef CXX17
+#    if __cplusplus > 201402L  // C++17
+#        define CXX17
 #    endif
-#    if !defined(tim_dll_import)
-#        define tim_dll_import
+#endif
+
+//--------------------------------------------------------------------------------------//
+
+// Define C++14
+#ifndef CXX14
+#    if __cplusplus > 201103L  // C++14
+#        define CXX14
 #    endif
+#endif
+
+//--------------------------------------------------------------------------------------//
+
+#if !defined(CXX14)
+#    if !defined(_WINDOWS)
+#        error "timemory requires __cplusplus > 201103L (C++14)"
+#    endif
+#endif
+
+//--------------------------------------------------------------------------------------//
+
+#if !defined(IF_CONSTEXPR)
+#    if defined(CXX17)
+#        define IF_CONSTEXPR(...) if constexpr(__VA_ARGS__)
+#    else
+#        define IF_CONSTEXPR(...) if(__VA_ARGS__)
+#    endif
+#endif
+
+//--------------------------------------------------------------------------------------//
+
+#if defined(CXX17)
+#    include <string_view>
+//
+#    if !defined(TIMEMORY_STRING_VIEW)
+#        define TIMEMORY_STRING_VIEW 1
+#    endif
+//
+namespace tim
+{
+using string_view_t = std::string_view;
+}
+//
 #else
-#    if !defined(tim_dll_export)
-#        define tim_dll_export
+//
+#    include <string>
+//
+#    if !defined(TIMEMORY_STRING_VIEW)
+#        define TIMEMORY_STRING_VIEW 0
 #    endif
-#    if !defined(tim_dll_import)
-#        define tim_dll_import
-#    endif
+//
+namespace tim
+{
+using string_view_t = std::string;
+}
+//
 #endif
+
+//--------------------------------------------------------------------------------------//

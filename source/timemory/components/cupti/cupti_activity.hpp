@@ -194,6 +194,7 @@ public:
 
     void stop()
     {
+        using namespace tim::component::operators;
         cupti::activity::stop_trace(this);
         auto tmp     = cupti::activity::get_receiver().get();
         auto kernels = cupti::activity::get_receiver().get_named(m_kernels_index, true);

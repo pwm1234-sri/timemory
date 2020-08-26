@@ -156,7 +156,8 @@ struct plot<type_list<Types...>> : plot<Types...>
 //
 template <typename... Types, typename std::enable_if<(sizeof...(Types) > 0), int>::type>
 void
-plot(string_t _prefix, const string_t& _dir, bool _echo_dart, string_t _json_file)
+plot(const string_t& _prefix, const string_t& _dir, bool _echo_dart,
+     const string_t& _json_file)
 {
     impl::plot<Types...>::generate(_prefix, _dir, _echo_dart, _json_file);
 }
@@ -176,7 +177,7 @@ echo_dart_file(const string_t& filepath, attributes_t attributes)
         return _str;
     };
 
-    auto contains = [&lowercase](const string_t& str, std::set<string_t> items) {
+    auto contains = [&lowercase](const string_t& str, const std::set<string_t>& items) {
         for(const auto& itr : items)
         {
             if(lowercase(str).find(itr) != string_t::npos)
@@ -192,12 +193,12 @@ echo_dart_file(const string_t& filepath, attributes_t attributes)
     if(attributes.find("name") == attributes.end())
     {
         auto name = filepath;
-        if(name.find("/") != string_t::npos)
-            name = name.substr(name.find_last_of("/") + 1);
-        if(name.find("\\") != string_t::npos)
-            name = name.substr(name.find_last_of("\\") + 1);
-        if(name.find(".") != string_t::npos)
-            name.erase(name.find_last_of("."));
+        if(name.find('/') != string_t::npos)
+            name = name.substr(name.find_last_of('/') + 1);
+        if(name.find('\\') != string_t::npos)
+            name = name.substr(name.find_last_of('\\') + 1);
+        if(name.find('.') != string_t::npos)
+            name.erase(name.find_last_of('.'));
         attributes["name"] = name;
     }
 

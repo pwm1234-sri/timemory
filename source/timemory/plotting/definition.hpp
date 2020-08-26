@@ -55,6 +55,7 @@ namespace plotting
 //
 //--------------------------------------------------------------------------------------//
 //
+// NOLINTNEXTLINE
 TIMEMORY_PLOTTING_LINKAGE(void)
 plot(string_t _label, string_t _prefix, const string_t& _dir, bool _echo_dart,
      string_t _json_file)
@@ -76,7 +77,7 @@ plot(string_t _label, string_t _prefix, const string_t& _dir, bool _echo_dart,
 
     auto _info = TIMEMORY_LABEL("");
 
-    auto _file = _json_file;
+    auto& _file = _json_file;
     {
         std::ifstream ifs(_file.c_str());
         bool          exists = ifs.good();

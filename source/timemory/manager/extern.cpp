@@ -34,7 +34,6 @@
 using manager_pointer_t = std::shared_ptr<tim::manager>;
 namespace
 {
-static manager_pointer_t timemory_master_manager_instance =
-    tim::manager::master_instance();
+manager_pointer_t timemory_master_manager_instance = tim::manager::master_instance();
 }
 //

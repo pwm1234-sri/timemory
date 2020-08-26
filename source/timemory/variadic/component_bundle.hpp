@@ -197,10 +197,10 @@ public:
     //      Copy/move construct and assignment
     //------------------------------------------------------------------------//
     component_bundle(const component_bundle& rhs);
-    component_bundle(component_bundle&&) = default;
+    component_bundle(component_bundle&&) noexcept = default;
 
     component_bundle& operator=(const component_bundle& rhs);
-    component_bundle& operator=(component_bundle&&) = default;
+    component_bundle& operator=(component_bundle&&) noexcept = default;
 
     component_bundle clone(bool store, scope::config _scope = scope::get_default());
 

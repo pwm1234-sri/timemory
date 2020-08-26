@@ -300,7 +300,7 @@ private:
 public:
     static void set_persistent_master(pointer_t _pinst)
     {
-        tim::manager::f_manager_persistent_data().master_instance = _pinst;
+        tim::manager::f_manager_persistent_data().master_instance = std::move(_pinst);
     }
 
     static void update_settings(const settings& _settings)

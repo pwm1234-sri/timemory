@@ -1092,12 +1092,12 @@ public:
         accum = 0.0;
     }
 
-    malloc_gotcha()                 = default;
-    ~malloc_gotcha()                = default;
-    malloc_gotcha(const this_type&) = default;
-    malloc_gotcha(this_type&&)      = default;
+    malloc_gotcha()                     = default;
+    ~malloc_gotcha()                    = default;
+    malloc_gotcha(const this_type&)     = default;
+    malloc_gotcha(this_type&&) noexcept = default;
     malloc_gotcha& operator=(const this_type&) = default;
-    malloc_gotcha& operator=(this_type&&) = default;
+    malloc_gotcha& operator=(this_type&&) noexcept = default;
 
 public:
     //----------------------------------------------------------------------------------//

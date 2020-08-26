@@ -439,8 +439,8 @@ public:
         return *this;
     }
 
-    gpu_roofline(gpu_roofline&&) = default;
-    gpu_roofline& operator=(gpu_roofline&&) = default;
+    gpu_roofline(gpu_roofline&&) noexcept = default;
+    gpu_roofline& operator=(gpu_roofline&&) noexcept = default;
 
     //----------------------------------------------------------------------------------//
 
@@ -480,6 +480,7 @@ public:
 
     void stop()
     {
+        using namespace tim::component::operators;
         switch(event_mode())
         {
             case MODE::ACTIVITY:

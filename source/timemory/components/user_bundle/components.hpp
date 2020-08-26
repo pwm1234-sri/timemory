@@ -269,7 +269,7 @@ public:
         return *this;
     }
 
-    user_bundle(user_bundle&& rhs)
+    user_bundle(user_bundle&& rhs) noexcept
     : base_type(std::move(rhs))
     , m_scope(std::move(rhs.m_scope))
     , m_prefix(std::move(rhs.m_prefix))
@@ -277,7 +277,7 @@ public:
     , m_bundle(std::move(rhs.m_bundle))
     {}
 
-    user_bundle& operator=(user_bundle&& rhs)
+    user_bundle& operator=(user_bundle&& rhs) noexcept
     {
         if(this != &rhs)
         {

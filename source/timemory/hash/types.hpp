@@ -93,8 +93,9 @@ add_hash_id(const std::string& prefix);
 //
 TIMEMORY_HASH_DLL
 void
-add_hash_id(graph_hash_map_ptr_t _hash_map, graph_hash_alias_ptr_t _hash_alias,
-            hash_result_type _hash_id, hash_result_type _alias_hash_id);
+add_hash_id(const graph_hash_map_ptr_t&   _hash_map,
+            const graph_hash_alias_ptr_t& _hash_alias, hash_result_type _hash_id,
+            hash_result_type _alias_hash_id);
 //
 //--------------------------------------------------------------------------------------//
 //
@@ -106,8 +107,8 @@ add_hash_id(hash_result_type _hash_id, hash_result_type _alias_hash_id);
 //
 TIMEMORY_HASH_DLL
 std::string
-get_hash_identifier(graph_hash_map_ptr_t _hash_map, graph_hash_alias_ptr_t _hash_alias,
-                    hash_result_type _hash_id);
+get_hash_identifier(const graph_hash_map_ptr_t&   _hash_map,
+                    const graph_hash_alias_ptr_t& _hash_alias, hash_result_type _hash_id);
 //
 //--------------------------------------------------------------------------------------//
 //

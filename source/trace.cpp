@@ -314,7 +314,7 @@ struct mpi_trace_gotcha : tim::component::base<mpi_trace_gotcha, void>
 
     static std::string& get_command()
     {
-        static std::string _instance = "";
+        static std::string _instance{};
         return _instance;
     }
 };
@@ -438,7 +438,7 @@ extern "C"
         {
             once_per_thread  = true;
             auto _master_ids = master_hash_ids;
-            for(auto itr : _master_ids)
+            for(const auto& itr : _master_ids)
                 timemory_add_hash_id(itr.first, itr.second.c_str());
         }
     }
@@ -659,9 +659,9 @@ extern "C"
             {
                 get_library_state()[0] = true;
                 std::string exe_name   = cmd;
-                while(exe_name.find("\\") != std::string::npos)
+                while(exe_name.find('\\') != std::string::npos)
                     exe_name = exe_name.substr(exe_name.find_last_of('\\') + 1);
-                while(exe_name.find("/") != std::string::npos)
+                while(exe_name.find('/') != std::string::npos)
                     exe_name = exe_name.substr(exe_name.find_last_of('/') + 1);
 
                 static const std::vector<std::string> _exe_suffixes = { ".py", ".exe" };

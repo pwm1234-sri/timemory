@@ -194,6 +194,7 @@ public:
 
     void stop()
     {
+        using namespace tim::component::operators;
         TIMEMORY_CUPTI_API_CALL(cuptiProfilerPopRange(&popRangeParams));
         auto _count = --get_counter();
         if(_count == 0)

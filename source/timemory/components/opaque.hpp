@@ -82,11 +82,11 @@ struct opaque
         }
     }
 
-    opaque()              = default;
-    opaque(const opaque&) = default;
-    opaque(opaque&&)      = default;
+    opaque()                  = default;
+    opaque(const opaque&)     = default;
+    opaque(opaque&&) noexcept = default;
     opaque& operator=(const opaque&) = default;
-    opaque& operator=(opaque&&) = default;
+    opaque& operator=(opaque&&) noexcept = default;
 
     operator bool() const { return m_valid; }
 
