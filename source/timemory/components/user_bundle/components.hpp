@@ -39,8 +39,8 @@
 #include "timemory/components/user_bundle/backends.hpp"
 #include "timemory/components/user_bundle/types.hpp"
 
-#include "timemory/runtime/types.hpp"
 #include "timemory/runtime/configure.hpp"
+#include "timemory/runtime/types.hpp"
 
 #include <functional>
 #include <regex>

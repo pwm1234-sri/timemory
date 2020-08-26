@@ -65,7 +65,7 @@ public:
     explicit tgraph_node(const T&);
     explicit tgraph_node(T&&) noexcept;
 
-#if defined(_WINDOWS) || defined(_TIMEMORY_NVCC) 
+#if defined(_WINDOWS) || defined(_TIMEMORY_NVCC)
     tgraph_node(const tgraph_node&) = default;
     tgraph_node& operator=(const tgraph_node&) = default;
 #else
@@ -75,7 +75,7 @@ public:
 
     tgraph_node(tgraph_node&&) = default;
     tgraph_node& operator=(tgraph_node&&) = default;
-    
+
     // tgraph_node(tgraph_node&&) noexcept = default;
     // tgraph_node& operator=(tgraph_node&&) noexcept = default;
 

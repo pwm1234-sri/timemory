@@ -311,7 +311,8 @@ TEST_F(user_bundle_tests, bundle_init_func)
     auto init_func = [](auto& al) { al.get_list().template initialize<cpu_clock>(); };
 
     {
-        auto_hybrid_t _bundle(details::get_test_name(), tim::scope::tree{}, false, init_func);
+        auto_hybrid_t _bundle(details::get_test_name(), tim::scope::tree{}, false,
+                              init_func);
         ret += details::fibonacci(35);
     }
 
@@ -347,12 +348,14 @@ TEST_F(user_bundle_tests, bundle_insert)
     };
 
     {
-        auto_custom_bundle_t _one(details::get_test_name(), tim::scope::tree{}, false, init_func);
+        auto_custom_bundle_t _one(details::get_test_name(), tim::scope::tree{}, false,
+                                  init_func);
         ret += details::fibonacci(35);
     }
 
     {
-        auto_custom_bundle_t _two(details::get_test_name(), tim::scope::tree{}, false, init_func);
+        auto_custom_bundle_t _two(details::get_test_name(), tim::scope::tree{}, false,
+                                  init_func);
         ret += details::fibonacci(35);
     }
 

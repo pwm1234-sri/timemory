@@ -350,7 +350,7 @@ TEST_F(hybrid_tests, auto_timer)
     details::print_info(_cpu_obj, _cpu_val, "sec");
 
     auto _obj  = tim::get(obj);
-    auto _cpu2  = std::get<1>(_obj);
+    auto _cpu2 = std::get<1>(_obj);
 
     ASSERT_NEAR(1.0e-9, _cpu.get(), _cpu2);
 }
