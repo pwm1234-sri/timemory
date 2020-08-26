@@ -735,7 +735,7 @@ private:
             }
         }
 
-        cupti_data(cupti_data&& rhs)
+        cupti_data(cupti_data&& rhs) noexcept
         {
             switch(event_mode())
             {
@@ -768,7 +768,7 @@ private:
             return *this;
         }
 
-        cupti_data& operator=(cupti_data&& rhs)
+        cupti_data& operator=(cupti_data&& rhs) noexcept
         {
             if(this == &rhs)
                 return *this;
