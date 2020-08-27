@@ -36,6 +36,7 @@
 #include "timemory/ert/extern.hpp"
 
 #include <array>
+#include <cassert>
 #include <memory>
 #include <numeric>
 #include <utility>
@@ -334,6 +335,7 @@ public:
 
         if(_store && _store->size() > 0)
         {
+            assert(_store->is_finalizing());
             // run roofline peak generation
             auto ert_config = get_finalizer();
             auto ert_data   = get_ert_data();

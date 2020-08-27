@@ -177,7 +177,7 @@ TIMEMORY_EXTERN_STORAGE(component::cpu_roofline_flops, cpu_roofline_flops)
 // TIMEMORY_EXTERN_STORAGE(component::gpu_roofline_hp_flops, gpu_roofline_hp_flops)
 TIMEMORY_EXTERN_STORAGE(component::gpu_roofline_sp_flops, gpu_roofline_sp_flops)
 TIMEMORY_EXTERN_STORAGE(component::gpu_roofline_dp_flops, gpu_roofline_dp_flops)
-// TIMEMORY_EXTERN_STORAGE(component::gpu_roofline_flops, gpu_roofline_flops)
+TIMEMORY_EXTERN_STORAGE(component::gpu_roofline_flops, gpu_roofline_flops)
 //
 #endif
 //

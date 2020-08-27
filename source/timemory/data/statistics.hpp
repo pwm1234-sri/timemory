@@ -292,3 +292,7 @@ operator+=(::tim::statistics<tuple<>>& _lhs, const Tp&)
 
 //--------------------------------------------------------------------------------------//
 }  // namespace std
+
+CEREAL_CLASS_VERSION(tim::statistics<int64_t>, 0)
+CEREAL_CLASS_VERSION(tim::statistics<float>, 0)
+CEREAL_CLASS_VERSION(tim::statistics<double>, 0)

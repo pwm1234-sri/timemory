@@ -51,7 +51,3 @@ get_setting_descriptions() { return get_descriptions<settings, api::native_tag>(
 }  // namespace tim
 
 #endif
-
-#if defined(TIMEMORY_SETTINGS_SOURCE)
-CEREAL_CLASS_VERSION(tim::settings, 1)
-#endif

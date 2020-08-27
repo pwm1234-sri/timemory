@@ -89,6 +89,8 @@ TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::gpu_roofline_flops, fals
 TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::gpu_roofline_hp_flops, false_type)
 TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::gpu_roofline_sp_flops, false_type)
 TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::gpu_roofline_dp_flops, false_type)
+#elif !defined(TIMEMORY_USE_CUDA_HALF)
+TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::gpu_roofline_hp_flops, false_type)
 #endif
 
 //--------------------------------------------------------------------------------------//

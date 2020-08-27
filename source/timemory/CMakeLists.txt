@@ -29,15 +29,15 @@ add_subdirectory(plotting)
 add_subdirectory(manager)
 add_subdirectory(ert)
 add_subdirectory(config)
+add_subdirectory(storage)
 add_subdirectory(operations)
-add_subdirectory(backends)
 add_subdirectory(variadic)
 
 add_subdirectory(components)
 
+add_subdirectory(backends)
 add_subdirectory(containers)
 add_subdirectory(runtime)
-add_subdirectory(storage)
 
 # add_subdirectory(compat)
 # add_subdirectory(data)

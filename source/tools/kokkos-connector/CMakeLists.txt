@@ -134,7 +134,7 @@ message(STATUS "")
 ##--------------------------------------------------------------------------------------##
 
 function(ADD_CONNECTOR_CONFIG _NAME)
-    cmake_parse_arguments(CONNECTOR "GPU" "" "COMPONENTS;TARGETS;DEFINITIONS" ${ARGN})
+    cmake_parse_arguments(CONNECTOR "GPU" "" "COMPONENTS;TARGETS;DEFINITIONS;ENVIRONMENT" ${ARGN})
     if(NOT TIMEMORY_BUILD_KOKKOS_CONFIG)
         return()
     endif()
@@ -159,9 +159,16 @@ function(ADD_CONNECTOR_CONFIG _NAME)
 
     # configure the components
     string(REPLACE ";" "," _COMPONENTS "${CONNECTOR_COMPONENTS}")
+    set(_ENVIRON)
+    foreach(_ENV ${CONNECTOR_ENVIRONMENT})
+       set(_ENVIRON "${_ENVIRON}tim::set_env(\"${_ENV}\", 1);\n")
+    endforeach()
+    string(REPLACE "=" "\", \"" _ENVIRON "${_ENVIRON}")
     message(STATUS "Building 'kp_timemory_${_NAME}' with '${_COMPONENTS}'...")
     set(KP_COMPONENTS ${_COMPONENTS})
-
+    set(KP_ENVIRON ${_ENVIRON})
+    set(KP_LIBNAME "kp_timemory_${_NAME}")
+    
     set(SOURCE_FILE ${PROJECT_BINARY_DIR}/kp_timemory_${_NAME}.${_EXT})
     configure_file(${PROJECT_SOURCE_DIR}/kp_timemory.cpp.in ${SOURCE_FILE} @ONLY)
 
@@ -223,42 +230,63 @@ if(TIMEMORY_USE_PAPI)
         timemory::timemory-ert
         timemory::timemory-cpu-roofline
         timemory::timemory-roofline-component)
-    add_connector_config(cpu_flops
+      
+    # creates a normal connector config and a rates version
+    function(add_papi_connector_config _NAME)
+        cmake_parse_arguments(
+            CONNECTOR "" "" "COMPONENTS;TARGETS;DEFINITIONS;ENVIRONMENT" ${ARGN})
+        add_connector_config(${_NAME}
+            COMPONENTS  ${CONNECTOR_COMPONENTS}
+            TARGETS     ${CONNECTOR_TARGETS}
+            DEFINITIONS ${CONNECTOR_DEFINITIONS}
+            ENVIRONMENT ${CONNECTOR_ENVIRONMENT}
+            TARGETS timemory::timemory-papi)
+        string(REPLACE "papi_tuple" "papi_rate_tuple"
+            CONNECTOR_COMPONENTS "${CONNECTOR_COMPONENTS}") 
+        add_connector_config(${_NAME}_rate
+            COMPONENTS  ${CONNECTOR_COMPONENTS}
+            TARGETS     ${CONNECTOR_TARGETS}
+            DEFINITIONS ${CONNECTOR_DEFINITIONS}
+            ENVIRONMENT ${CONNECTOR_ENVIRONMENT}
+            TARGETS timemory::timemory-papi)
+    endfunction()
+        
+    add_papi_connector_config(cpu_flops
         COMPONENTS papi_tuple<PAPI_DP_OPS,PAPI_SP_OPS>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_instructions
+    add_papi_connector_config(cpu_instructions
         COMPONENTS papi_tuple<PAPI_TOT_INS,PAPI_LD_INS,PAPI_SR_INS>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_cache_misses
+    add_papi_connector_config(cpu_cache_misses
         COMPONENTS papi_tuple<PAPI_L1_TCM,PAPI_L2_TCM,PAPI_L3_TCM>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_tlb
+    add_papi_connector_config(cpu_tlb
         COMPONENTS papi_tuple<PAPI_TLB_DM,PAPI_TLB_IM,PAPI_TLB_TL,PAPI_TLB_SD>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_branching
+    add_papi_connector_config(cpu_branching
         COMPONENTS
         papi_tuple<PAPI_BR_UCN,PAPI_BR_CN,PAPI_BR_TKN,PAPI_BR_NTK,PAPI_BR_MSP,PAPI_BR_PRC,PAPI_BR_INS>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_stalls
+    add_papi_connector_config(cpu_stalls
         COMPONENTS
         papi_tuple<PAPI_MEM_SCY,PAPI_MEM_RCY,PAPI_MEM_WCY,PAPI_RES_STL,PAPI_FP_STAL>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l1_misses
+    add_papi_connector_config(cpu_l1_misses
         COMPONENTS papi_tuple<PAPI_L1_DCM,PAPI_L1_ICM,PAPI_L1_TCM,PAPI_L1_LDM,PAPI_L1_STM>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l2_misses
-        COMPONENTS papi_tuple<PAPI_L1_DCM,PAPI_L1_ICM,PAPI_L1_TCM,PAPI_L1_LDM,PAPI_L1_STM>
+    add_papi_connector_config(cpu_l2_misses
+        COMPONENTS papi_tuple<PAPI_L2_DCM,PAPI_L2_ICM,PAPI_L2_TCM,PAPI_L2_LDM,PAPI_L2_STM>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l3_misses
+    add_papi_connector_config(cpu_l3_misses
         COMPONENTS papi_tuple<PAPI_L3_DCM,PAPI_L3_ICM,PAPI_L3_TCM,PAPI_L3_LDM,PAPI_L3_STM>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l1_total
+    add_papi_connector_config(cpu_l1_total
         COMPONENTS papi_tuple<PAPI_L1_TCM,PAPI_L1_TCH,PAPI_L1_TCA,PAPI_L1_TCR,PAPI_L1_TCW>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l2_total
+    add_papi_connector_config(cpu_l2_total
         COMPONENTS papi_tuple<PAPI_L2_TCM,PAPI_L2_TCH,PAPI_L2_TCA,PAPI_L2_TCR,PAPI_L2_TCW>
         TARGETS timemory::timemory-papi)
-    add_connector_config(cpu_l3_total
+    add_papi_connector_config(cpu_l3_total
         COMPONENTS papi_tuple<PAPI_L3_TCM,PAPI_L3_TCH,PAPI_L3_TCA,PAPI_L3_TCR,PAPI_L3_TCW>
         TARGETS timemory::timemory-papi)
 endif()
@@ -301,6 +329,83 @@ if(TIMEMORY_USE_CUDA)
         timemory::timemory-gpu-roofline
         timemory::timemory-ert
         timemory::timemory-roofline-component)
+    add_connector_config(gpu_instructions
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=inst_issued,inst_executed,thread_inst_executed,ldst_executed,inst_integer,inst_fp_16,inst_fp_32,inst_fp_64,inst_inter_thread_communication"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_cache_misses
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=tex_cache_transactions,tex_cache_hit_rate,tex0_cache_sector_queries,tex0_cache_sector_misses,tex1_cache_sector_queries,tex1_cache_sector_misses,l2_tex_hit_rate,dram_read_bytes,dram_write_bytes"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_branching
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=divergent_branch,branch,branch_efficiency"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_stalls
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=stall_inst_fetch,stall_exec_dependency,stall_memory_dependency,stall_texture,stall_sync,stall_other,stall_constant_memory_dependency,stall_pipe_busy,stall_memory_throttle,stall_not_selected"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_l2_total
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=l2_read_transactions,l2_write_transactions,l2_atomic_transactions,l2_global_load_bytes,l2_local_load_bytes,l2_local_global_store_bytes,l2_global_reduction_bytes,l2_global_atomic_store_bytes"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_efficiency
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=branch_efficiency,warp_execution_efficiency,warp_nonpred_execution_efficiency,gld_efficiency,gst_efficiency,shared_efficiency,sm_efficiency,flop_hp_efficiency,flop_sp_efficiency,flop_dp_efficiency"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_ipc
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=ipc,issued_ipc"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_warps
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=warps_launched,active_warps,inst_per_warp,warp_execution_efficiency,warp_nonpred_execution_efficiency,unique_warps_launched,eligible_warps_per_cycle"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_double_flops
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=flop_count_dp,flop_count_dp_add,flop_count_dp_fma,flop_count_dp_mul,flop_dp_efficiency"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_single_flops
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=flop_count_sp,flop_count_sp_add,flop_count_sp_fma,flop_count_sp_mul,flop_count_sp_special,flop_sp_efficiency"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
+    add_connector_config(gpu_half_flops
+        COMPONENTS cupti_counters
+        ENVIRONMENT "TIMEMORY_CUPTI_METRICS=flop_count_hp,flop_count_hp_add,flop_count_hp_mul,flop_count_hp_fma,flop_hp_efficiency"
+        TARGETS
+        timemory::timemory-cupti
+        timemory::timemory-cuda
+        timemory::timemory-cupti-component)
 endif()
 
 if(TIMEMORY_USE_VTUNE)

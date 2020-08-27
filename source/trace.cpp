@@ -39,14 +39,7 @@
 #include <iostream>
 #include <unordered_map>
 
-// #include <dlfcn.h>
-
 using namespace tim::component;
-
-CEREAL_CLASS_VERSION(tim::settings, 1)
-CEREAL_CLASS_VERSION(tim::env_settings, 0)
-CEREAL_CLASS_VERSION(tim::component::wall_clock, 0)
-CEREAL_CLASS_VERSION(tim::statistics<double>, 0)
 
 using string_t       = std::string;
 using overhead_map_t = std::unordered_map<size_t, std::pair<wall_clock, size_t>>;

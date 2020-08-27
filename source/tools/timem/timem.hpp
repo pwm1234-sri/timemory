@@ -41,6 +41,8 @@ TIMEMORY_DEFINE_CONCRETE_TRAIT(is_available, component::page_rss, false_type)
 #include "timemory/sampling/sampler.hpp"
 #include "timemory/timemory.hpp"
 
+TIMEMORY_DEFINE_CONCRETE_TRAIT(custom_label_printing, component::papi_array_t, true_type)
+
 // C includes
 #include <errno.h>
 #include <signal.h>
@@ -447,7 +449,7 @@ public:
         ssp << std::setw(_width) << std::left << _key;
         os << ssp.str() << ssd.str();
 
-        if(&os != obj.m_ofs)
+        if(&os != obj.m_ofs && obj.m_ofs)
             *(obj.m_ofs) << get_local_datetime("[===== %r %F =====]\n") << ssp.str()
                          << ssd.str() << std::endl;
 

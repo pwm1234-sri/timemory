@@ -931,3 +931,5 @@ settings::serialize(Archive& ar, const unsigned int)
 //----------------------------------------------------------------------------------//
 //
 }  // namespace tim
+
+CEREAL_CLASS_VERSION(tim::settings, 1)
