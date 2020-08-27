@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "timemory/runtime/configure.hpp"
 #include "timemory/timemory.hpp"
 
 #include "kp_timemory.hpp"
@@ -38,6 +37,19 @@ using section_map_t   = std::unordered_map<uint64_t, section_entry_t>;
 
 //--------------------------------------------------------------------------------------//
 
+struct kp_timemory_parallel_for
+{};
+struct kp_timemory_parallel_reduce
+{};
+struct kp_timemory_parallel_scan
+{};
+struct kp_timemory_region
+{};
+struct kp_timemory_section
+{};
+
+//--------------------------------------------------------------------------------------//
+
 extern "C"
 {
     TIMEMORY_WEAK_PREFIX
@@ -49,25 +61,6 @@ extern "C"
 
     void timemory_mpip_library_ctor() {}
     void timemory_ompt_library_ctor() {}
-}
-
-//--------------------------------------------------------------------------------------//
-
-static uint64_t
-get_unique_id()
-{
-    static thread_local uint64_t _instance = 0;
-    return _instance++;
-}
-
-//--------------------------------------------------------------------------------------//
-
-template <typename Tp>
-Tp&
-get_tl_static()
-{
-    static thread_local Tp _instance;
-    return _instance;
 }
 
 //--------------------------------------------------------------------------------------//
@@ -105,43 +98,30 @@ destroy_profiler(uint64_t kernid)
 
 //--------------------------------------------------------------------------------------//
 
-static void
-start_profiler(uint64_t kernid)
+template <typename Tp, typename... Args>
+void
+start_profiler(uint64_t kernid, Tp, Args&&... _args)
 {
     if(get_profile_map().find(kernid) != get_profile_map().end())
+    {
+        get_profile_map().at(kernid).audit(Tp{});
+        get_profile_map().at(kernid).audit(std::forward<Args>(_args)...);
         get_profile_map().at(kernid).start();
+    }
 }
 
 //--------------------------------------------------------------------------------------//
 
-static void
-stop_profiler(uint64_t kernid)
+template <typename... Args>
+void
+stop_profiler(uint64_t kernid, Args&&... _args)
 {
     if(get_profile_map().find(kernid) != get_profile_map().end())
+    {
         get_profile_map().at(kernid).stop();
+        get_profile_map().at(kernid).audit(std::forward<Args>(_args)...);
+    }
 }
-
-//--------------------------------------------------------------------------------------//
-//  call this function if KokkosUserBundle is listed as one of the tools
-//  (long compile times)
-//
-template <typename TupleT,
-          enable_if_t<(tim::is_one_of<KokkosUserBundle, TupleT>::value), int> = 0>
-static void
-configure(const std::vector<TIMEMORY_COMPONENT>& components)
-{
-    tim::configure<KokkosUserBundle>(components);
-}
-
-//--------------------------------------------------------------------------------------//
-//  call this function if KokkosUserBundle is NOT listed as one of the tools
-//  (drastically reduces compile times)
-//
-template <typename TupleT,
-          enable_if_t<!(tim::is_one_of<KokkosUserBundle, TupleT>::value), int> = 0>
-static void
-configure(const std::vector<TIMEMORY_COMPONENT>&)
-{}
 
 //======================================================================================//
 //
@@ -202,7 +182,7 @@ kokkosp_begin_parallel_for(const char* name, uint32_t devid, uint64_t* kernid)
         auto pname = TIMEMORY_JOIN("/", "kokkos", TIMEMORY_JOIN("", "dev", devid), name);
         *kernid    = get_unique_id();
         create_profiler(pname, *kernid);
-        start_profiler(*kernid);
+        start_profiler(*kernid, kp_timemory_parallel_for{}, name, devid);
     }
 }
 
@@ -226,7 +206,7 @@ kokkosp_begin_parallel_reduce(const char* name, uint32_t devid, uint64_t* kernid
         auto pname = TIMEMORY_JOIN("/", "kokkos", TIMEMORY_JOIN("", "dev", devid), name);
         *kernid    = get_unique_id();
         create_profiler(pname, *kernid);
-        start_profiler(*kernid);
+        start_profiler(*kernid, kp_timemory_parallel_reduce{}, name, devid);
     }
 }
 
@@ -250,7 +230,7 @@ kokkosp_begin_parallel_scan(const char* name, uint32_t devid, uint64_t* kernid)
         auto pname = TIMEMORY_JOIN("/", "kokkos", TIMEMORY_JOIN("", "dev", devid), name);
         *kernid    = get_unique_id();
         create_profiler(pname, *kernid);
-        start_profiler(*kernid);
+        start_profiler(*kernid, kp_timemory_parallel_scan{}, name, devid);
     }
 }
 
@@ -272,6 +252,7 @@ kokkosp_push_profile_region(const char* name)
     if_constexpr(profile_entry_t::size() > 0)
     {
         get_profile_stack().push_back(profile_entry_t(name, true));
+        get_profile_stack().back().audit(kp_timemory_region{});
         get_profile_stack().back().start();
     }
 }
@@ -313,13 +294,16 @@ kokkosp_destroy_profile_section(uint32_t secid)
 extern "C" void
 kokkosp_start_profile_section(uint32_t secid)
 {
-    if_constexpr(profile_entry_t::size() > 0) { start_profiler(secid); }
+    if_constexpr(profile_entry_t::size() > 0)
+    {
+        start_profiler(secid, kp_timemory_section{});
+    }
 }
 
 extern "C" void
 kokkosp_stop_profile_section(uint32_t secid)
 {
-    if_constexpr(profile_entry_t::size() > 0) { start_profiler(secid); }
+    if_constexpr(profile_entry_t::size() > 0) { stop_profiler(secid); }
 }
 
 //--------------------------------------------------------------------------------------//

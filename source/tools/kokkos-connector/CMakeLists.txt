@@ -11,7 +11,14 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     message(FATAL_ERROR "In-source build")
 endif()
 
+#
+#   Project declaration
+#
 project(timemory-kokkos-connector LANGUAGES C CXX)
+
+include(CheckLanguage)
+include(GNUInstallDirs)
+include(CMakeParseArguments)
 
 # if built in kokkos-tools or in timemory
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME kokkos)
@@ -19,87 +26,31 @@ set(TIMEMORY_KOKKOS_TOOLS_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/timemory/kokkos-to
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/kokkos-tools)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/kokkos-tools)
 
-include(CheckLanguage)
-include(GNUInstallDirs)
-include(CMakeParseArguments)
-
 set(LINKER_LANGUAGE CXX)
 set(CUDA_AVAILABLE OFF)
 if(TIMEMORY_USE_CUDA AND CMAKE_CUDA_COMPILER)
     set(LINKER_LANGUAGE CUDA)
     set(CUDA_AVAILABLE ON)
 endif()
-
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build flags" FORCE)
+    set(CMAKE_BUILD_TYPE "Release")
 endif()
-
 if(NOT CMAKE_VERSION VERSION_LESS 3.18)
     cmake_policy(SET CMP0104 OLD)
 endif()
-
 set(BUILD_SHARED_LIBS ON)
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ language standard")
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "CXX language standard")
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "CXX language flags required")
 set(CMAKE_CUDA_STANDARD 14 CACHE STRING "CUDA language standard")
-set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "C++ language flags required")
 set(CMAKE_CUDA_STANDARD_REQUIRED ON CACHE BOOL "CUDA language flags required")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+set(TIMEMORY_KOKKOS_COMPONENTS "" CACHE STRING "Explicit list of timemory components")
+set(TIMEMORY_BUILD_KOKKOS_CONNECTORS "all" CACHE STRING "List of connector configurations to build")
 
+#
+#   Options
+#
 add_option(TIMEMORY_KOKKOS_BUILD_SAMPLE "Build sample test" OFF NO_FEATURE)
-
-if(NOT TIMEMORY_USE_CUDA)
-    set(LINKER_LANGUAGE CXX)
-endif()
-
-# CMake INTERFACE target for timemory that provides include path
-set(COMPONENTS headers vector dmp)
-
-if(TARGET timemory-cxx-shared)
-    list(APPEND COMPONENTS cxx-shared)
-endif()
-
-message(STATUS "")
-set(TIMEMORY_KOKKOS_COMPONENTS "" CACHE STRING
-    "Explicit list of timemory components")
-
-# configure libraries
-set(timemory_INTERFACE_LIBRARY)
-foreach(_COMP ${COMPONENTS} ${TIMEMORY_KOKKOS_COMPONENTS})
-    list(APPEND timemory_INTERFACE_LIBRARY timemory::timemory-${_COMP})
-endforeach()
-
-add_library(kp_timemory SHARED ${PROJECT_SOURCE_DIR}/kp_timemory.cpp
-    ${PROJECT_SOURCE_DIR}/kp_timemory.hpp)
-target_link_libraries(kp_timemory ${timemory_INTERFACE_LIBRARY})
-set_target_properties(kp_timemory PROPERTIES
-    PREFIX          ""
-    LINKER_LANGUAGE ${LINKER_LANGUAGE})
-
-install(TARGETS kp_timemory DESTINATION ${TIMEMORY_KOKKOS_TOOLS_INSTALL_DIR})
-
-add_library(kp_timemory_filter SHARED ${PROJECT_SOURCE_DIR}/kp_timemory_filter.cpp)
-target_link_libraries(kp_timemory_filter ${timemory_INTERFACE_LIBRARY})
-set_target_properties(kp_timemory_filter PROPERTIES
-    PREFIX          ""
-    LINKER_LANGUAGE ${LINKER_LANGUAGE})
-
-install(TARGETS kp_timemory_filter DESTINATION ${TIMEMORY_KOKKOS_TOOLS_INSTALL_DIR})
-
-#
-#   Build the sample
-#
-if(TIMEMORY_KOKKOS_BUILD_SAMPLE)
-    # create test executable
-    add_executable(sample sample/sample.cpp)
-    target_link_libraries(sample kp_timemory)
-endif()
-
-#
-#   Build the configurations
-#
-# general options
-set(TIMEMORY_BUILD_KOKKOS_CONNECTORS "all" CACHE STRING
-    "List of connector configurations to build")
 add_option(TIMEMORY_BUILD_KOKKOS_CONFIG "Build various connector configurations" OFF)
 add_feature(TIMEMORY_BUILD_KOKKOS_CONNECTORS "List of connector configurations to build" DOC)
 if(DEFINED TIMEMORY_KOKKOS_BUILD_CONFIG)
@@ -110,11 +61,69 @@ if(DEFINED TIMEMORY_KOKKOS_BUILD_CONNECTORS)
 endif()
 string(TOUPPER "${TIMEMORY_BUILD_KOKKOS_CONNECTORS}" _CONNECTORS)
 
+message(STATUS "")
+#
+#   Configure common target
+#
+set(timemory_INTERFACE_LIBRARY)
+foreach(_COMP headers vector dmp cxx-shared mpip-library ompt-library ncclp-library
+        ${TIMEMORY_KOKKOS_COMPONENTS})
+    if(TARGET timemory::timemory-${_COMP})
+        list(APPEND timemory_INTERFACE_LIBRARY timemory::timemory-${_COMP})
+    endif()
+endforeach()
+
+#
+#   Function for common routines on libraries
+#   Any additional args are treated as libraries
+#
+function(configure_library _NAME)
+    target_include_directories(${_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
+    target_link_libraries(${_NAME} PRIVATE ${timemory_INTERFACE_LIBRARY} ${ARGN})
+    set_target_properties(${_NAME} PROPERTIES
+        PREFIX          ""
+        LINKER_LANGUAGE ${LINKER_LANGUAGE})
+    install(TARGETS ${_NAME} DESTINATION ${TIMEMORY_KOKKOS_TOOLS_INSTALL_DIR})
+endfunction()
+
+#
+#   Build object library
+#
+add_library(kp_timemory_common OBJECT ${PROJECT_SOURCE_DIR}/kp_timemory_common.cpp
+    ${PROJECT_SOURCE_DIR}/kp_timemory.hpp)
+target_link_libraries(kp_timemory_common PUBLIC
+    timemory::timemory-headers
+    ${timemory_INTERFACE_LIBRARY})
+set(timemory_COMMON_SOURCES $<TARGET_OBJECTS:kp_timemory_common>)
+
+#
+#   Build generic library
+#
+add_library(kp_timemory SHARED ${PROJECT_SOURCE_DIR}/kp_timemory.cpp
+    ${timemory_COMMON_SOURCES})
+configure_library(kp_timemory)
+
+#
+#   Build regex filtering library
+#
+add_library(kp_timemory_filter SHARED ${PROJECT_SOURCE_DIR}/kp_timemory_filter.cpp
+     ${timemory_COMMON_SOURCES})
+configure_library(kp_timemory_filter)
+
+#
+#   Build the sample (test executable)
+#
+if(TIMEMORY_KOKKOS_BUILD_SAMPLE)
+    add_executable(sample sample/sample.cpp)
+    target_link_libraries(sample PRIVATE kp_timemory)
+endif()
+
 ##--------------------------------------------------------------------------------------##
 
 if(NOT TIMEMORY_BUILD_KOKKOS_CONFIG)
     message(STATUS "")
-    message(STATUS "[${PROJECT_NAME}] Disabled building explicit configurations with 'TIMEMORY_BUILD_KOKKOS_CONFIG=OFF'")
+    message(STATUS
+        "[${PROJECT_NAME}] Disabled building explicit configurations with 'TIMEMORY_BUILD_KOKKOS_CONFIG=OFF'")
     message(STATUS "")
     return()
 endif()
@@ -125,10 +134,6 @@ message(STATUS "")
 message(STATUS "Building explicit connector configurations: ${_CONNECTORS}")
 message(STATUS "    Disable building explicit configurations with '-DTIMEMORY_BUILD_KOKKOS_CONFIG=OFF'")
 message(STATUS "    Reduce explicit configurations with semi-colon delimited '-DTIMEMORY_BUILD_KOKKOS_CONNECTORS=\"...\"'")
-message(STATUS "")
-message(STATUS "Generating a custom configuration:")
-message(STATUS "    '-DTIMEMORY_KOKKOS_USER_CONNECTOR_CONFIG=\"...\"' --> name for the configuration")
-message(STATUS "    '-DTIMEMORY_KOKKOS_USER_CONNECTOR_TYPES=\"...\"'  --> semi-colon delimited list of components")
 message(STATUS "")
 
 ##--------------------------------------------------------------------------------------##
@@ -173,19 +178,10 @@ function(ADD_CONNECTOR_CONFIG _NAME)
     configure_file(${PROJECT_SOURCE_DIR}/kp_timemory.cpp.in ${SOURCE_FILE} @ONLY)
 
     add_library(kp_timemory_${_NAME} SHARED
-        ${SOURCE_FILE} ${PROJECT_SOURCE_DIR}/kp_timemory.hpp)
-    target_include_directories(kp_timemory_${_NAME} PRIVATE
-        ${PROJECT_SOURCE_DIR})
-    target_link_libraries(kp_timemory_${_NAME} PRIVATE
-        timemory::timemory-headers
-        ${CONNECTOR_TARGETS})
+        ${SOURCE_FILE} ${timemory_COMMON_SOURCES})
+    configure_library(kp_timemory_${_NAME} ${CONNECTOR_TARGETS})
     target_compile_definitions(kp_timemory_${_NAME} PRIVATE
         ${CONNECTOR_DEFINITIONS})
-    set_target_properties(kp_timemory_${_NAME} PROPERTIES
-        PREFIX ""
-        LINKER_LANGUAGE ${LINKER_LANGUAGE})
-    install(TARGETS kp_timemory_${_NAME}
-        DESTINATION ${TIMEMORY_KOKKOS_TOOLS_INSTALL_DIR})
 endfunction()
 
 ##--------------------------------------------------------------------------------------##
@@ -451,13 +447,3 @@ if(TIMEMORY_USE_OMPT AND _OMPT_LIB)
         DEFINITIONS TIMEMORY_USE_OMPT_LIBRARY
         TARGETS ${_OMPT_LIB})
 endif()
-
-if(USER_CONNECTOR_CONFIG AND USER_CONNECTOR_TYPES)
-    string(TOLOWER "${USER_CONNECTOR_CONFIG}" _TAG)
-    string(TOLOWER "${USER_CONNECTOR_TYPES}" _TYPES)
-    add_connector_config(${_TAG}
-        COMPONENTS ${_TYPES}
-        TARGETS ${timemory_INTERFACE_LIBRARY})
-endif()
-
-message(STATUS "")
