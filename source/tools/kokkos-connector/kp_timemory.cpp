@@ -85,6 +85,19 @@ stop_profiler(uint64_t kernid)
         get_profile_map().at(kernid).stop();
 }
 
+//--------------------------------------------------------------------------------------//
+
+bool
+configure_environment()
+{
+    tim::set_env("TIMEMORY_TIME_OUTPUT", "ON", 0);
+    tim::set_env("TIMEMORY_COUT_OUTPUT", "OFF", 0);
+    tim::set_env("TIMEMORY_ADD_SECONDARY", "OFF", 0);
+    return true;
+}
+
+static auto env_configured = (configure_environment(), true);
+
 //======================================================================================//
 //
 //      Kokkos symbols
@@ -95,6 +108,7 @@ extern "C" void
 kokkosp_init_library(const int loadSeq, const uint64_t interfaceVer,
                      const uint32_t devInfoCount, void* deviceInfo)
 {
+    tim::consume_parameters(devInfoCount, deviceInfo);
     printf("%s\n", spacer.c_str());
     printf("# KokkosP: timemory Connector (sequence is %d, version: %llu)\n", loadSeq,
            (unsigned long long) interfaceVer);
@@ -107,11 +121,16 @@ kokkosp_init_library(const int loadSeq, const uint64_t interfaceVer,
     auto papi_events             = tim::get_env<std::string>("PAPI_EVENTS", "");
     tim::settings::papi_events() = papi_events;
 
+    printf("%s\n", spacer.c_str());
+    printf("# KokkosP: timemory Connector (sequence is %d, version: %llu)\n", loadSeq,
+           (unsigned long long) interfaceVer);
+    printf("%s\n\n", spacer.c_str());
+
     // timemory_init is expecting some args so generate some
-    auto  dir  = TIMEMORY_JOIN("_", loadSeq, interfaceVer, devInfoCount);
-    char* cstr = strdup(dir.c_str());
-    tim::timemory_init(1, &cstr);
-    free(cstr);
+    std::array<char*, 1> cstr = { { strdup("kp_timemory") } };
+    tim::timemory_init(1, cstr.data());
+    free(cstr.at(0));
+    assert(env_configured);
 
     std::string default_components =
         (use_roofline) ? "gpu_roofline_flops, cpu_roofline" : "wall_clock, peak_rss";
@@ -120,10 +139,10 @@ kokkosp_init_library(const int loadSeq, const uint64_t interfaceVer,
         default_components += ", papi_vector";
 
     // check environment variables "KOKKOS_TIMEMORY_COMPONENTS" and
-    // "KOKKOS_PROFILE_COMPONENTS"
+    // "TIMEMORY_KOKKOS_COMPONENTS"
     tim::env::configure<KokkosUserBundle>(
-        "KOKKOS_TIMEMORY_COMPONENTS",
-        tim::get_env("KOKKOS_PROFILE_COMPONENTS", default_components));
+        "TIMEMORY_KOKKOS_COMPONENTS",
+        tim::get_env("KOKKOS_TIMEMORY_COMPONENTS", default_components));
 }
 
 extern "C" void

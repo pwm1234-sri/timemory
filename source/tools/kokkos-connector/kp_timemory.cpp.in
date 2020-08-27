@@ -123,26 +123,33 @@ stop_profiler(uint64_t kernid, Args&&... _args)
     }
 }
 
+//--------------------------------------------------------------------------------------//
+
+bool
+configure_environment()
+{
+    tim::set_env("TIMEMORY_TIME_OUTPUT", "ON", 0);
+    tim::set_env("TIMEMORY_COUT_OUTPUT", "OFF", 0);
+    tim::set_env("TIMEMORY_ADD_SECONDARY", "OFF", 0);
+    // clang-format off
+    @KP_ENVIRON@
+    return true;
+    // clang-format on
+}
+
+static auto env_configured = (configure_environment(), true);
+
 //======================================================================================//
 //
 //      Kokkos symbols
 //
 //======================================================================================//
 
-bool configure_environment()
-{
-    tim::set_env("TIMEMORY_TIME_OUTPUT", "ON", 0);
-    tim::set_env("TIMEMORY_ADD_SECONDARY", "OFF", 0);
-    @KP_ENVIRON@
-    return true;
-}
-
-static auto env_configured = (configure_environment(), true);
-
 extern "C" void
 kokkosp_init_library(const int loadSeq, const uint64_t interfaceVer,
                      const uint32_t devInfoCount, void* deviceInfo)
 {
+    tim::consume_parameters(devInfoCount, deviceInfo);
     timemory_mpip_library_ctor();
     timemory_ompt_library_ctor();
 
