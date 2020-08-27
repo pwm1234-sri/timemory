@@ -1264,18 +1264,19 @@ public:
 //
 template <int... EventTypes>
 struct papi_rate_tuple
-: public base<papi_rate_tuple<EventTypes...>, std::pair<papi_tuple<EventTypes...>, wall_clock>>
+: public base<papi_rate_tuple<EventTypes...>,
+              std::pair<papi_tuple<EventTypes...>, wall_clock>>
 {
-    using size_type    = std::size_t;
+    using size_type                   = std::size_t;
     static const size_type num_events = sizeof...(EventTypes);
-    
+
     using tuple_type   = papi_tuple<EventTypes...>;
     using value_type   = std::pair<tuple_type, wall_clock>;
     using this_type    = papi_rate_tuple<EventTypes...>;
     using base_type    = base<this_type, value_type>;
     using storage_type = typename base_type::storage_type;
     using common_type  = this_type;
-    
+
     template <typename Tp>
     using array_t = std::array<Tp, num_events>;
 
@@ -1284,20 +1285,30 @@ struct papi_rate_tuple
     friend struct operation::stop<this_type>;
 
 public:
-    static void configure()
-    {
-        tuple_type::configure();
-    }
+    static void configure() { tuple_type::configure(); }
     static void thread_init() { tuple_type::thread_init(nullptr); }
     static void thread_finalize() { tuple_type::thread_finalize(nullptr); }
     static void initialize() { tuple_type::initialize(); }
     static void finalize() { tuple_type::finalize(); }
 
-public:
-    //TIMEMORY_DEFAULT_OBJECT(papi_rate_tuple)
+    static std::string label() { return tuple_type::label() + "_rate"; }
+    static std::string description()
+    {
+        return "Divides the given set of HW counters by the elapsed time of the "
+               "measurement";
+    }
 
-    void start() { value.first.start(); value.second.start(); }
-    void stop() { value.first.stop(); value.second.stop(); }
+public:
+    void start()
+    {
+        value.first.start();
+        value.second.start();
+    }
+    void stop()
+    {
+        value.first.stop();
+        value.second.stop();
+    }
 
     this_type& operator+=(const this_type& rhs)
     {
@@ -1305,21 +1316,13 @@ public:
         value.second += rhs.value.second;
         return *this;
     }
-    
+
     this_type& operator-=(const this_type& rhs)
     {
         value.first -= rhs.value.first;
         value.second -= rhs.value.second;
         return *this;
     }
-
-    static std::string label()
-    {
-        return tuple_type::label() + "_rate";
-    }
-    static std::string description() { return "Divides the given set of HW counters by the elapsed time of the measurement"; }
-    // static std::string display_unit() { return ""; }
-    // static uint64_t    unit() { return 1; }
 
     auto get() const
     {
@@ -1360,7 +1363,7 @@ public:
     static auto unit_array()
     {
         std::array<double, num_events> arr;
-        auto _units = tuple_type::unit_array();
+        auto                           _units = tuple_type::unit_array();
         for(size_t i = 0; i < _units.size(); ++i)
             arr.at(i) = _units.at(i);
         for(auto& itr : _units)
