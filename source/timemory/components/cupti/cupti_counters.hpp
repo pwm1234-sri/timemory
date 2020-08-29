@@ -134,8 +134,8 @@ struct cupti_counters : public base<cupti_counters, cupti::profiler::results_t>
             init();
     }
 
-    static void global_init(storage_type*) { configure(); }
-    static void global_finalize(storage_type*) { clear(); }
+    static void global_init() { configure(); }
+    static void global_finalize() { clear(); }
 
     static const profptr_t& get_profiler() { return _get_profiler(); }
     static const strvec_t&  get_events() { return *_get_events(); }

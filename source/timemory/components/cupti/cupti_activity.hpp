@@ -152,7 +152,7 @@ struct cupti_activity : public base<cupti_activity, uint64_t>
 
     //----------------------------------------------------------------------------------//
 
-    static void global_init(storage_type*)
+    static void global_init()
     {
         static std::atomic<short> _once(0);
         if(_once++ > 0)
@@ -163,7 +163,7 @@ struct cupti_activity : public base<cupti_activity, uint64_t>
 
     //----------------------------------------------------------------------------------//
 
-    static void global_finalize(storage_type*)
+    static void global_finalize()
     {
         cupti::activity::finalize_trace(get_kind_types());
     }

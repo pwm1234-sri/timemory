@@ -363,8 +363,8 @@ struct papi_vector
 
     static auto& get_initializer() { return papi_common::get_initializer<common_type>(); }
     static void  configure() { papi_common::initialize<common_type>(); }
-    static void  thread_init(storage_type*) { papi_common::initialize<common_type>(); }
-    static void  thread_finalize(storage_type*)
+    static void  thread_init() { papi_common::initialize<common_type>(); }
+    static void  thread_finalize()
     {
         papi_common::finalize<common_type>();
         papi_common::finalize_papi();
@@ -685,8 +685,8 @@ struct papi_array
 
     static auto& get_initializer() { return papi_common::get_initializer<common_type>(); }
     static void  configure() { papi_common::initialize<common_type>(); }
-    static void  thread_init(storage_type*) { papi_common::initialize<common_type>(); }
-    static void  thread_finalize(storage_type*)
+    static void  thread_init() { papi_common::initialize<common_type>(); }
+    static void  thread_finalize()
     {
         papi_common::finalize<common_type>();
         papi_common::finalize_papi();
@@ -1013,8 +1013,8 @@ public:
         papi_common::get_events<common_type>() = { EventTypes... };
         papi_common::initialize<common_type>();
     }
-    static void thread_init(storage_type*) { this_type::configure(); }
-    static void thread_finalize(storage_type*)
+    static void thread_init() { this_type::configure(); }
+    static void thread_finalize()
     {
         papi_common::finalize<common_type>();
         papi_common::finalize_papi();
@@ -1286,8 +1286,8 @@ struct papi_rate_tuple
 
 public:
     static void configure() { tuple_type::configure(); }
-    static void thread_init() { tuple_type::thread_init(nullptr); }
-    static void thread_finalize() { tuple_type::thread_finalize(nullptr); }
+    static void thread_init() { tuple_type::thread_init(); }
+    static void thread_finalize() { tuple_type::thread_finalize(); }
     static void initialize() { tuple_type::initialize(); }
     static void finalize() { tuple_type::finalize(); }
 

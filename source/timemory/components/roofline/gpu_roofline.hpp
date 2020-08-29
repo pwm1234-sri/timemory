@@ -308,12 +308,12 @@ public:
 
     //----------------------------------------------------------------------------------//
 
-    static void global_init(storage_type*)
+    static void global_init()
     {
         if(event_mode() == MODE::ACTIVITY)
-            activity_type::global_init(nullptr);
+            activity_type::global_init();
         else
-            counters_type::global_init(nullptr);
+            counters_type::global_init();
     }
 
     //----------------------------------------------------------------------------------//
@@ -329,9 +329,9 @@ public:
     static void global_finalize(storage_type* _store)
     {
         if(event_mode() == MODE::ACTIVITY)
-            activity_type::global_finalize(nullptr);
+            activity_type::global_finalize();
         else
-            counters_type::global_finalize(nullptr);
+            counters_type::global_finalize();
 
         if(_store && _store->size() > 0)
         {
@@ -347,8 +347,8 @@ public:
 
     //----------------------------------------------------------------------------------//
 
-    static void thread_init(storage_type*) {}
-    static void thread_finalize(storage_type*) {}
+    static void thread_init() {}
+    static void thread_finalize() {}
 
     //----------------------------------------------------------------------------------//
 

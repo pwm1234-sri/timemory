@@ -263,7 +263,7 @@ struct cpu_roofline
 
     //----------------------------------------------------------------------------------//
 
-    static void global_init(storage_type*)
+    static void global_init()
     {
         if(settings::debug() || settings::verbose() > 2)
             PRINT_HERE("%s", "global initialization of cpu_roofline");
@@ -272,7 +272,7 @@ struct cpu_roofline
 
     //----------------------------------------------------------------------------------//
 
-    static void thread_init(storage_type*)
+    static void thread_init()
     {
         if(settings::debug() || settings::verbose() > 2)
             PRINT_HERE("%s", "thread initialization of cpu_roofline");
@@ -281,7 +281,7 @@ struct cpu_roofline
 
     //----------------------------------------------------------------------------------//
 
-    static void thread_finalize(storage_type*) {}
+    static void thread_finalize() {}
 
     //----------------------------------------------------------------------------------//
 
