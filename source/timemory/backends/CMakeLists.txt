@@ -1,5 +1,5 @@
 
-if(TIMEMORY_USE_MPI)
+if(TIMEMORY_USE_MPI_INIT)
 
     file(GLOB_RECURSE mpi_header_files ${CMAKE_CURRENT_SOURCE_DIR}/types/mpi/*.hpp)
     file(GLOB_RECURSE mpi_source_files ${CMAKE_CURRENT_SOURCE_DIR}/types/mpi/*.cpp)

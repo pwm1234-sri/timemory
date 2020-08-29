@@ -12,9 +12,9 @@ endforeach()
 set(${PROJECT_NAME}_CMAKE_DEFINES "${${PROJECT_NAME}_CMAKE_DEFINES}\n")
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/Templates/defines.h.in
-    ${CMAKE_CURRENT_LIST_DIR}/defines.h.in @ONLY)
+    ${CMAKE_CURRENT_LIST_DIR}/.defines.h.in @ONLY)
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/defines.h.in
+configure_file(${CMAKE_CURRENT_LIST_DIR}/.defines.h.in
     ${CMAKE_CURRENT_LIST_DIR}/defines.h @ONLY)
 
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/defines.h

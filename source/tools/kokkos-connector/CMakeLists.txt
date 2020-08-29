@@ -173,7 +173,7 @@ function(ADD_CONNECTOR_CONFIG _NAME)
     set(KP_COMPONENTS ${_COMPONENTS})
     set(KP_ENVIRON ${_ENVIRON})
     set(KP_LIBNAME "kp_timemory_${_NAME}")
-    
+
     set(SOURCE_FILE ${PROJECT_BINARY_DIR}/kp_timemory_${_NAME}.${_EXT})
     configure_file(${PROJECT_SOURCE_DIR}/kp_timemory.cpp.in ${SOURCE_FILE} @ONLY)
 
@@ -228,7 +228,7 @@ if(TIMEMORY_USE_PAPI)
         timemory::timemory-cpu-roofline
         timemory::timemory-papi-component
         timemory::timemory-roofline-component)
-      
+
     # creates a normal connector config and a rates version
     function(add_papi_connector_config _NAME)
         cmake_parse_arguments(
@@ -240,7 +240,7 @@ if(TIMEMORY_USE_PAPI)
             ENVIRONMENT ${CONNECTOR_ENVIRONMENT}
             TARGETS timemory::timemory-papi)
         string(REPLACE "papi_tuple" "papi_rate_tuple"
-            CONNECTOR_COMPONENTS "${CONNECTOR_COMPONENTS}") 
+            CONNECTOR_COMPONENTS "${CONNECTOR_COMPONENTS}")
         add_connector_config(${_NAME}_rate
             COMPONENTS  ${CONNECTOR_COMPONENTS}
             TARGETS     ${CONNECTOR_TARGETS}
@@ -248,7 +248,7 @@ if(TIMEMORY_USE_PAPI)
             ENVIRONMENT ${CONNECTOR_ENVIRONMENT}
             TARGETS timemory::timemory-papi)
     endfunction()
-        
+
     add_papi_connector_config(cpu_flops
         COMPONENTS papi_tuple<PAPI_DP_OPS,PAPI_SP_OPS>
         TARGETS timemory::timemory-papi)
@@ -302,17 +302,12 @@ endif()
 
 if(TIMEMORY_USE_CUDA)
     add_connector_config(cuda_profiler
-        COMPONENTS cuda_profiler
+        COMPONENTS nvtx_marker
         TARGETS
         timemory::timemory-cuda-component)
 
     add_connector_config(cuda_event
         COMPONENTS cuda_event
-        TARGETS
-        timemory::timemory-cuda-component)
-
-    add_connector_config(cuda_nvtx
-        COMPONENTS nvtx_marker
         TARGETS
         timemory::timemory-cuda-component)
 

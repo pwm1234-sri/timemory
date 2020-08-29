@@ -27,6 +27,7 @@
 #    define TIMEMORY_USE_CUDA_HALF
 #endif
 
+#include "timemory/ert.hpp"
 #include "timemory/timemory.hpp"
 #include "timemory/utility/signals.hpp"
 #include "timemory/utility/testing.hpp"

@@ -265,6 +265,8 @@ add_option(TIMEMORY_USE_STATISTICS
     "Enable statistics by default" ON CMAKE_DEFINE)
 add_option(TIMEMORY_USE_MPI
     "Enable MPI usage" ${_MPI} CMAKE_DEFINE)
+add_option(TIMEMORY_USE_MPI_INIT
+    "Enable MPI_Init and MPI_Init_thread wrappers" OFF CMAKE_DEFINE)
 add_option(TIMEMORY_USE_UPCXX
     "Enable UPCXX usage (MPI support takes precedence)" ${_UPCXX} CMAKE_DEFINE)
 add_option(TIMEMORY_USE_SANITIZER
@@ -279,8 +281,6 @@ add_option(TIMEMORY_USE_COVERAGE
     "Enable code-coverage" ${_USE_COVERAGE})
 add_option(TIMEMORY_USE_GPERFTOOLS
     "Enable gperftools" ${_GPERFTOOLS} CMAKE_DEFINE)
-add_option(TIMEMORY_USE_GPERFTOOLS_STATIC
-    "Enable gperftools static targets (enable if gperftools library are built with -fPIC)" OFF)
 add_option(TIMEMORY_USE_ARCH
     "Enable architecture flags" OFF CMAKE_DEFINE)
 add_option(TIMEMORY_USE_VTUNE

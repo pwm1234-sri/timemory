@@ -23,8 +23,7 @@
 // SOFTWARE.
 //
 
-#include "timemory/ert/configuration.hpp"
-#include "timemory/ert/data.hpp"
+#include "timemory/ert.hpp"
 #include "timemory/timemory.hpp"
 
 #include <cstdint>
