@@ -56,9 +56,11 @@ namespace plotting
 //
 void
 plot(const std::string& _label, const std::string& _prefix, const std::string& _dir,
-     bool _echo_dart, const std::string& _json_file);
+     bool _echo_dart, const std::string& _json_file) TIMEMORY_VISIBILITY("default");
 //
-//--------------------------------------------------------------------------------------//
+void
+echo_dart_file(const string_t& filepath, attributes_t attributes)
+    TIMEMORY_VISIBILITY("default");
 //
 template <typename... Types>
 std::enable_if_t<(sizeof...(Types) > 0), void>
